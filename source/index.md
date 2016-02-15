@@ -31,9 +31,9 @@ A validação do número de cartão da maioria das bandeiras em todo o mundo é 
 
 O primeiro passo é remover temporariamente o último dígito, no caso o dígito 2. O novo número vai ficar assim: 401200103714111.
 
-|Descrição| - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-|---------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|Número do cartão|4|0|1|2|0|0|1|0|3|7|1|4|1|1|1|-|
+|Posição| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|Número do cartão|4|0|1|2|0|0|1|0|3|7|1|4|1|1|1|*x*|
 
 O segundo passo é multiplicar, iniciando do primeiro dígito, todos os dígitos que estão em posição par por 2 e todos os dígitos em posição impar por 1:
 
