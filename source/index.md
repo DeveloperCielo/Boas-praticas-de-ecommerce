@@ -1,5 +1,5 @@
 ---
-title: Números dos cartões e validação
+title: Boas Práticas eCommerce
 
 language_tabs:
   - php: PHP
@@ -7,23 +7,27 @@ language_tabs:
 search: true
 ---
 
-# Números dos cartões e validação
+# Boas Práticas eCommerce
 
 Seja por curiosidade, seja por necessidade, você já deve ter se perguntado sobre como é definido o número de um cartão de crédito. Algumas pessoas chegam a achar que são números aleatórios, ou sequênciais, atribuídos pelas bandeiras ou pelos bancos emissores, mas a realidade é que o número do cartão segue um padrão especificado e que é possível saber qual é a bandeira, tipo do cartão e a conta do portador, apenas observando o número do cartão; em alguns casos, de fato, é possível saber até o país de origem do cartão, apenas observando seu número.
 
-Com o objetivo de contribuir para a redução as transações negadas pelo código 14 – cartão inválido, a Cielo recomenda o uso do algoritmo de Luhn para verificação da sequência de números dos cartões de credito e débito utilizados na sua loja. Esse tutorial descreve como se dá o algoritmo Luhn e também lista os BINs das bandeiras, para contribuir ainda mais com a diminuição das negativas por código 14.
+Com o objetivo de contribuir para a redução as transações negadas pelo código 14 – cartão inválido, a Cielo recomenda o uso do algoritmo de Luhn para verificação da sequência de números dos cartões de credito e débito utilizados na sua loja. A partir desta medida, o lojista conseguirá evitar que uma transação com o cartão digitado incorretamente seja enviado para processamento.
 
-## Dissecando o número do cartão
+Por isso, a Cielo recomenda que, no momento que o portador digitar o número do cartão e o algoritmo de Luhn detectar que a digitação está incorreta, o lojista deverá exibir a informação clara para o portador, solicitando que o cartão seja digitado novamente ou tente outro cartão”
+
+## Números de cartões
 
 ![Cartão Visa](images/cartao.png)
 
 Basicamente, o número do cartão é composto por três partes:
 
-1. Bin ou Inn - Bank identification number, ou Issuer identification number, é o número que identifica o banco emissor; Visa, Mastercard, Amex, etc, cada um desses emissores são identificados através dos primeiros dígitos do cartão. No caso do cartão de exemplo acima, o Bin é 4, que é o identificador da Visa.
+1. **Bin ou Inn** - Bank identification number, ou Issuer identification number, é o número que identifica o banco emissor das bandeiras Visa, Mastercard, Amex, entre outras, por meio dos primeiros dígitos do cartão. No caso do cartão de exemplo acima, o Bin é 4, que é o identificador da Visa.
 2. Conta do cliente - Após o bin, os próximos dígitos identificam o número da conta do portador no banco emissor. Logo após o Bin, os próximos 14 dúgitos são o identificador da conta do cliente: **012 0010 3714 111**.
 3. Dígito de verificação - Esse último dígito é utilizado para verificar se o número do cartão de crédito é válido. Para se chegar no dígito verificador é utilizado um algorítimo chamado Luhn. No caso do cartão de exemplo acima, o dígito verificador é **2**.
 
-# Validação do número do cartão
+# Validação dos números do cartão
+
+<aside class="warning">A Cielo não realiza suporte ou se responsabiliza pelo atendimento desse tipo de implementação. Esse tutorial é meramente informativo, com o propósito de ajudar o lojista a diminuir o número de transações negadas com o código 14.</aside>
 
 ## Validação dos números do cartão
 

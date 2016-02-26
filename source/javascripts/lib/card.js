@@ -1,8 +1,8 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = require('./lib/extend');
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.card = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+module.exports = _dereq_('./lib/extend');
 
 
-},{"./lib/extend":2}],2:[function(require,module,exports){
+},{"./lib/extend":2}],2:[function(_dereq_,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -12,7 +12,7 @@ module.exports = require('./lib/extend');
  * @fileoverview
  * Port of jQuery.extend that actually works on node.js
  */
-var is = require('is');
+var is = _dereq_('is');
 
 function extend() {
   var target = arguments[0] || {};
@@ -86,8 +86,8 @@ extend.version = '1.1.3';
 module.exports = extend;
 
 
-},{"is":3}],3:[function(require,module,exports){
-
+},{"is":3}],3:[function(_dereq_,module,exports){
+/* globals window, HTMLElement */
 /**!
  * is
  * the definitive JavaScript type testing library
@@ -107,7 +107,7 @@ var isActualNaN = function (value) {
   return value !== value;
 };
 var NON_HOST_TYPES = {
-  boolean: 1,
+  'boolean': 1,
   number: 1,
   string: 1,
   undefined: 1
@@ -166,11 +166,11 @@ is.empty = function (value) {
   var type = toStr.call(value);
   var key;
 
-  if ('[object Array]' === type || '[object Arguments]' === type || '[object String]' === type) {
+  if (type === '[object Array]' || type === '[object Arguments]' || type === '[object String]') {
     return value.length === 0;
   }
 
-  if ('[object Object]' === type) {
+  if (type === '[object Object]') {
     for (key in value) {
       if (owns.call(value, key)) { return false; }
     }
@@ -189,9 +189,8 @@ is.empty = function (value) {
  * @return {Boolean} true if `value` is equal to `other`, false otherwise
  */
 
-is.equal = function (value, other) {
-  var strictlyEqual = value === other;
-  if (strictlyEqual) {
+is.equal = function equal(value, other) {
+  if (value === other) {
     return true;
   }
 
@@ -202,7 +201,7 @@ is.equal = function (value, other) {
     return false;
   }
 
-  if ('[object Object]' === type) {
+  if (type === '[object Object]') {
     for (key in value) {
       if (!is.equal(value[key], other[key]) || !(key in other)) {
         return false;
@@ -216,7 +215,7 @@ is.equal = function (value, other) {
     return true;
   }
 
-  if ('[object Array]' === type) {
+  if (type === '[object Array]') {
     key = value.length;
     if (key !== other.length) {
       return false;
@@ -229,15 +228,15 @@ is.equal = function (value, other) {
     return true;
   }
 
-  if ('[object Function]' === type) {
+  if (type === '[object Function]') {
     return value.prototype === other.prototype;
   }
 
-  if ('[object Date]' === type) {
+  if (type === '[object Date]') {
     return value.getTime() === other.getTime();
   }
 
-  return strictlyEqual;
+  return false;
 };
 
 /**
@@ -308,7 +307,7 @@ is.undef = is.undefined = function (value) {
  */
 
 is.args = is.arguments = function (value) {
-  var isStandardArguments = '[object Arguments]' === toStr.call(value);
+  var isStandardArguments = toStr.call(value) === '[object Arguments]';
   var isOldArguments = !is.array(value) && is.arraylike(value) && is.object(value) && is.fn(value.callee);
   return isStandardArguments || isOldArguments;
 };
@@ -326,8 +325,8 @@ is.args = is.arguments = function (value) {
  * @api public
  */
 
-is.array = function (value) {
-  return '[object Array]' === toStr.call(value);
+is.array = Array.isArray || function (value) {
+  return toStr.call(value) === '[object Array]';
 };
 
 /**
@@ -364,7 +363,7 @@ is.array.empty = function (value) {
  */
 
 is.arraylike = function (value) {
-  return !!value && !is.boolean(value)
+  return !!value && !is.bool(value)
     && owns.call(value, 'length')
     && isFinite(value.length)
     && is.number(value.length)
@@ -376,7 +375,7 @@ is.arraylike = function (value) {
  */
 
 /**
- * is.boolean
+ * is.bool
  * Test if `value` is a boolean.
  *
  * @param {Mixed} value value to test
@@ -384,8 +383,8 @@ is.arraylike = function (value) {
  * @api public
  */
 
-is.boolean = function (value) {
-  return '[object Boolean]' === toStr.call(value);
+is.bool = is['boolean'] = function (value) {
+  return toStr.call(value) === '[object Boolean]';
 };
 
 /**
@@ -398,7 +397,7 @@ is.boolean = function (value) {
  */
 
 is['false'] = function (value) {
-  return is.boolean(value) && Boolean(Number(value)) === false;
+  return is.bool(value) && Boolean(Number(value)) === false;
 };
 
 /**
@@ -411,7 +410,7 @@ is['false'] = function (value) {
  */
 
 is['true'] = function (value) {
-  return is.boolean(value) && Boolean(Number(value)) === true;
+  return is.bool(value) && Boolean(Number(value)) === true;
 };
 
 /**
@@ -428,7 +427,7 @@ is['true'] = function (value) {
  */
 
 is.date = function (value) {
-  return '[object Date]' === toStr.call(value);
+  return toStr.call(value) === '[object Date]';
 };
 
 /**
@@ -465,7 +464,7 @@ is.element = function (value) {
  */
 
 is.error = function (value) {
-  return '[object Error]' === toStr.call(value);
+  return toStr.call(value) === '[object Error]';
 };
 
 /**
@@ -483,7 +482,7 @@ is.error = function (value) {
 
 is.fn = is['function'] = function (value) {
   var isAlert = typeof window !== 'undefined' && value === window.alert;
-  return isAlert || '[object Function]' === toStr.call(value);
+  return isAlert || toStr.call(value) === '[object Function]';
 };
 
 /**
@@ -500,7 +499,7 @@ is.fn = is['function'] = function (value) {
  */
 
 is.number = function (value) {
-  return '[object Number]' === toStr.call(value);
+  return toStr.call(value) === '[object Number]';
 };
 
 /**
@@ -546,7 +545,7 @@ is.divisibleBy = function (value, n) {
 };
 
 /**
- * is.int
+ * is.integer
  * Test if `value` is an integer.
  *
  * @param value to test
@@ -554,7 +553,7 @@ is.divisibleBy = function (value, n) {
  * @api public
  */
 
-is.int = function (value) {
+is.integer = is['int'] = function (value) {
   return is.number(value) && !isActualNaN(value) && value % 1 === 0;
 };
 
@@ -753,7 +752,7 @@ is.within = function (value, start, finish) {
  */
 
 is.object = function (value) {
-  return '[object Object]' === toStr.call(value);
+  return toStr.call(value) === '[object Object]';
 };
 
 /**
@@ -783,7 +782,7 @@ is.hash = function (value) {
  */
 
 is.regexp = function (value) {
-  return '[object RegExp]' === toStr.call(value);
+  return toStr.call(value) === '[object RegExp]';
 };
 
 /**
@@ -800,7 +799,7 @@ is.regexp = function (value) {
  */
 
 is.string = function (value) {
-  return '[object String]' === toStr.call(value);
+  return toStr.call(value) === '[object String]';
 };
 
 /**
@@ -850,9 +849,601 @@ is.symbol = function (value) {
   return typeof Symbol === 'function' && toStr.call(value) === '[object Symbol]' && typeof symbolValueOf.call(value) === 'symbol';
 };
 
-},{}],4:[function(require,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 (function (global){
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),(f.qj||(f.qj={})).js=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+var Payment, QJ, cardFromNumber, cardFromType, cards, defaultFormat, formatBackCardNumber, formatBackExpiry, formatCardNumber, formatExpiry, formatForwardExpiry, formatForwardSlash, formatMonthExpiry, hasTextSelected, luhnCheck, reFormatCardNumber, restrictCVC, restrictCardNumber, restrictCombinedExpiry, restrictExpiry, restrictMonthExpiry, restrictNumeric, restrictYearExpiry, setCardType,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+QJ = _dereq_('qj/src/qj.coffee');
+
+defaultFormat = /(\d{1,4})/g;
+
+cards = [
+  {
+    type: 'elo',
+    pattern: /^650(48[5-9]|49[0-9]|5[1-2][0-9]|53[0-8])|4011(78|79)|431274|438935|45(1416|7393|7631|7632)|504175|627780|636(297|368)|506699|5067([0-6][0-9]|7[0-8])|509[0-9]{3}|65003[1-3]|6500(3[5-9]|4[0-9]|5[0-1])|6504(0[5-9]|[1-3][0-9])|6505(4[1-9]|[5-8][0-9]|9[0-8])|6507(0[0-1]|1[0-8])|65072[0-7]|6509(01|1[0-9]|20)|6516(5[2-9]|6[0-9]|7[0-9])|6550([0-1][0-9])|6550(2[1-9]|[3-4][0-9]|5[0-8])/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'amex',
+    pattern: /^3[47]/,
+    format: /(\d{1,4})(\d{1,6})?(\d{1,5})?/,
+    length: [15],
+    cvcLength: [4],
+    luhn: true
+  }, {
+    type: 'dankort',
+    pattern: /^5019/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'dinersclub',
+    pattern: /^(36|3[8-9]|30[0-5]|309)/,
+    format: defaultFormat,
+    length: [14],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'discover',
+    pattern: /^(6011|65|64[4-9]|622)/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'jcb',
+    pattern: /^35(2[8-9]|[3-8][0-9])/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'laser',
+    pattern: /^(6706|6771|6709)/,
+    format: defaultFormat,
+    length: [16, 17, 18, 19],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'maestro',
+    pattern: /^(5018|5020|5038|6304|6703|6759|676[1-3])/,
+    format: defaultFormat,
+    length: [12, 13, 14, 15, 16, 17, 18, 19],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'mastercard',
+    pattern: /^5[1-5]/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'unionpay',
+    pattern: /^62/,
+    format: defaultFormat,
+    length: [16, 17, 18, 19],
+    cvcLength: [3],
+    luhn: false
+  }, {
+    type: 'visaelectron',
+    pattern: /^4(026|17500|405|508|844|91[37])/,
+    format: defaultFormat,
+    length: [16],
+    cvcLength: [3],
+    luhn: true
+  }, {
+    type: 'visa',
+    pattern: /^4/,
+    format: defaultFormat,
+    length: [13, 16],
+    cvcLength: [3],
+    luhn: true
+  }
+];
+
+cardFromNumber = function(num) {
+  var card, i, len;
+  num = (num + '').replace(/\D/g, '');
+  for (i = 0, len = cards.length; i < len; i++) {
+    card = cards[i];
+    if (card.pattern.test(num)) {
+      return card;
+    }
+  }
+};
+
+cardFromType = function(type) {
+  var card, i, len;
+  for (i = 0, len = cards.length; i < len; i++) {
+    card = cards[i];
+    if (card.type === type) {
+      return card;
+    }
+  }
+};
+
+luhnCheck = function(num) {
+  var digit, digits, i, len, odd, sum;
+  odd = true;
+  sum = 0;
+  digits = (num + '').split('').reverse();
+  for (i = 0, len = digits.length; i < len; i++) {
+    digit = digits[i];
+    digit = parseInt(digit, 10);
+    if ((odd = !odd)) {
+      digit *= 2;
+    }
+    if (digit > 9) {
+      digit -= 9;
+    }
+    sum += digit;
+  }
+  return sum % 10 === 0;
+};
+
+hasTextSelected = function(target) {
+  var ref;
+  if ((target.selectionStart != null) && target.selectionStart !== target.selectionEnd) {
+    return true;
+  }
+  if ((typeof document !== "undefined" && document !== null ? (ref = document.selection) != null ? ref.createRange : void 0 : void 0) != null) {
+    if (document.selection.createRange().text) {
+      return true;
+    }
+  }
+  return false;
+};
+
+reFormatCardNumber = function(e) {
+  return setTimeout((function(_this) {
+    return function() {
+      var target, value;
+      target = e.target;
+      value = QJ.val(target);
+      value = Payment.fns.formatCardNumber(value);
+      return QJ.val(target, value);
+    };
+  })(this));
+};
+
+formatCardNumber = function(e) {
+  var card, digit, length, re, target, upperLength, value;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  target = e.target;
+  value = QJ.val(target);
+  card = cardFromNumber(value + digit);
+  length = (value.replace(/\D/g, '') + digit).length;
+  upperLength = 16;
+  if (card) {
+    upperLength = card.length[card.length.length - 1];
+  }
+  if (length >= upperLength) {
+    return;
+  }
+  if ((target.selectionStart != null) && target.selectionStart !== value.length) {
+    return;
+  }
+  if (card && card.type === 'amex') {
+    re = /^(\d{4}|\d{4}\s\d{6})$/;
+  } else {
+    re = /(?:^|\s)(\d{4})$/;
+  }
+  if (re.test(value)) {
+    e.preventDefault();
+    return QJ.val(target, value + ' ' + digit);
+  } else if (re.test(value + digit)) {
+    e.preventDefault();
+    return QJ.val(target, value + digit + ' ');
+  }
+};
+
+formatBackCardNumber = function(e) {
+  var target, value;
+  target = e.target;
+  value = QJ.val(target);
+  if (e.meta) {
+    return;
+  }
+  if (e.which !== 8) {
+    return;
+  }
+  if ((target.selectionStart != null) && target.selectionStart !== value.length) {
+    return;
+  }
+  if (/\d\s$/.test(value)) {
+    e.preventDefault();
+    return QJ.val(target, value.replace(/\d\s$/, ''));
+  } else if (/\s\d?$/.test(value)) {
+    e.preventDefault();
+    return QJ.val(target, value.replace(/\s\d?$/, ''));
+  }
+};
+
+formatExpiry = function(e) {
+  var digit, target, val;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  target = e.target;
+  val = QJ.val(target) + digit;
+  if (/^\d$/.test(val) && (val !== '0' && val !== '1')) {
+    e.preventDefault();
+    return QJ.val(target, "0" + val + " / ");
+  } else if (/^\d\d$/.test(val)) {
+    e.preventDefault();
+    return QJ.val(target, val + " / ");
+  }
+};
+
+formatMonthExpiry = function(e) {
+  var digit, target, val;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  target = e.target;
+  val = QJ.val(target) + digit;
+  if (/^\d$/.test(val) && (val !== '0' && val !== '1')) {
+    e.preventDefault();
+    return QJ.val(target, "0" + val);
+  } else if (/^\d\d$/.test(val)) {
+    e.preventDefault();
+    return QJ.val(target, "" + val);
+  }
+};
+
+formatForwardExpiry = function(e) {
+  var digit, target, val;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  target = e.target;
+  val = QJ.val(target);
+  if (/^\d\d$/.test(val)) {
+    return QJ.val(target, val + " / ");
+  }
+};
+
+formatForwardSlash = function(e) {
+  var slash, target, val;
+  slash = String.fromCharCode(e.which);
+  if (slash !== '/') {
+    return;
+  }
+  target = e.target;
+  val = QJ.val(target);
+  if (/^\d$/.test(val) && val !== '0') {
+    return QJ.val(target, "0" + val + " / ");
+  }
+};
+
+formatBackExpiry = function(e) {
+  var target, value;
+  if (e.metaKey) {
+    return;
+  }
+  target = e.target;
+  value = QJ.val(target);
+  if (e.which !== 8) {
+    return;
+  }
+  if ((target.selectionStart != null) && target.selectionStart !== value.length) {
+    return;
+  }
+  if (/\d(\s|\/)+$/.test(value)) {
+    e.preventDefault();
+    return QJ.val(target, value.replace(/\d(\s|\/)*$/, ''));
+  } else if (/\s\/\s?\d?$/.test(value)) {
+    e.preventDefault();
+    return QJ.val(target, value.replace(/\s\/\s?\d?$/, ''));
+  }
+};
+
+restrictNumeric = function(e) {
+  var input;
+  if (e.metaKey || e.ctrlKey) {
+    return true;
+  }
+  if (e.which === 32) {
+    return e.preventDefault();
+  }
+  if (e.which === 0) {
+    return true;
+  }
+  if (e.which < 33) {
+    return true;
+  }
+  input = String.fromCharCode(e.which);
+  if (!/[\d\s]/.test(input)) {
+    return e.preventDefault();
+  }
+};
+
+restrictCardNumber = function(e) {
+  var card, digit, target, value;
+  target = e.target;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  if (hasTextSelected(target)) {
+    return;
+  }
+  value = (QJ.val(target) + digit).replace(/\D/g, '');
+  card = cardFromNumber(value);
+  if (card) {
+    if (!(value.length <= card.length[card.length.length - 1])) {
+      return e.preventDefault();
+    }
+  } else {
+    if (!(value.length <= 16)) {
+      return e.preventDefault();
+    }
+  }
+};
+
+restrictExpiry = function(e, length) {
+  var digit, target, value;
+  target = e.target;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  if (hasTextSelected(target)) {
+    return;
+  }
+  value = QJ.val(target) + digit;
+  value = value.replace(/\D/g, '');
+  if (value.length > length) {
+    return e.preventDefault();
+  }
+};
+
+restrictCombinedExpiry = function(e) {
+  return restrictExpiry(e, 6);
+};
+
+restrictMonthExpiry = function(e) {
+  return restrictExpiry(e, 2);
+};
+
+restrictYearExpiry = function(e) {
+  return restrictExpiry(e, 4);
+};
+
+restrictCVC = function(e) {
+  var digit, target, val;
+  target = e.target;
+  digit = String.fromCharCode(e.which);
+  if (!/^\d+$/.test(digit)) {
+    return;
+  }
+  if (hasTextSelected(target)) {
+    return;
+  }
+  val = QJ.val(target) + digit;
+  if (!(val.length <= 4)) {
+    return e.preventDefault();
+  }
+};
+
+setCardType = function(e) {
+  var allTypes, card, cardType, target, val;
+  target = e.target;
+  val = QJ.val(target);
+  cardType = Payment.fns.cardType(val) || 'unknown';
+  if (!QJ.hasClass(target, cardType)) {
+    allTypes = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = cards.length; i < len; i++) {
+        card = cards[i];
+        results.push(card.type);
+      }
+      return results;
+    })();
+    QJ.removeClass(target, 'unknown');
+    QJ.removeClass(target, allTypes.join(' '));
+    QJ.addClass(target, cardType);
+    QJ.toggleClass(target, 'identified', cardType !== 'unknown');
+    return QJ.trigger(target, 'payment.cardType', cardType);
+  }
+};
+
+Payment = (function() {
+  function Payment() {}
+
+  Payment.fns = {
+    cardExpiryVal: function(value) {
+      var month, prefix, ref, year;
+      value = value.replace(/\s/g, '');
+      ref = value.split('/', 2), month = ref[0], year = ref[1];
+      if ((year != null ? year.length : void 0) === 2 && /^\d+$/.test(year)) {
+        prefix = (new Date).getFullYear();
+        prefix = prefix.toString().slice(0, 2);
+        year = prefix + year;
+      }
+      month = parseInt(month, 10);
+      year = parseInt(year, 10);
+      return {
+        month: month,
+        year: year
+      };
+    },
+    validateCardNumber: function(num) {
+      var card, ref;
+      num = (num + '').replace(/\s+|-/g, '');
+      if (!/^\d+$/.test(num)) {
+        return false;
+      }
+      card = cardFromNumber(num);
+      if (!card) {
+        return false;
+      }
+      return (ref = num.length, indexOf.call(card.length, ref) >= 0) && (card.luhn === false || luhnCheck(num));
+    },
+    validateCardExpiry: function(month, year) {
+      var currentTime, expiry, prefix, ref;
+      if (typeof month === 'object' && 'month' in month) {
+        ref = month, month = ref.month, year = ref.year;
+      }
+      if (!(month && year)) {
+        return false;
+      }
+      month = QJ.trim(month);
+      year = QJ.trim(year);
+      if (!/^\d+$/.test(month)) {
+        return false;
+      }
+      if (!/^\d+$/.test(year)) {
+        return false;
+      }
+      if (!(parseInt(month, 10) <= 12)) {
+        return false;
+      }
+      if (year.length === 2) {
+        prefix = (new Date).getFullYear();
+        prefix = prefix.toString().slice(0, 2);
+        year = prefix + year;
+      }
+      expiry = new Date(year, month);
+      currentTime = new Date;
+      expiry.setMonth(expiry.getMonth() - 1);
+      expiry.setMonth(expiry.getMonth() + 1, 1);
+      return expiry > currentTime;
+    },
+    validateCardCVC: function(cvc, type) {
+      var ref, ref1;
+      cvc = QJ.trim(cvc);
+      if (!/^\d+$/.test(cvc)) {
+        return false;
+      }
+      if (type && cardFromType(type)) {
+        return ref = cvc.length, indexOf.call((ref1 = cardFromType(type)) != null ? ref1.cvcLength : void 0, ref) >= 0;
+      } else {
+        return cvc.length >= 3 && cvc.length <= 4;
+      }
+    },
+    cardType: function(num) {
+      var ref;
+      if (!num) {
+        return null;
+      }
+
+      return ((ref = cardFromNumber(num)) != null ? ref.type : void 0) || null;
+    },
+    formatCardNumber: function(num) {
+      var card, groups, ref, upperLength;
+      card = cardFromNumber(num);
+      if (!card) {
+        return num;
+      }
+      upperLength = card.length[card.length.length - 1];
+      num = num.replace(/\D/g, '');
+      num = num.slice(0, +upperLength + 1 || 9e9);
+      if (card.format.global) {
+        return (ref = num.match(card.format)) != null ? ref.join(' ') : void 0;
+      } else {
+        groups = card.format.exec(num);
+        if (groups != null) {
+          groups.shift();
+        }
+        return groups != null ? groups.join(' ') : void 0;
+      }
+    }
+  };
+
+  Payment.restrictNumeric = function(el) {
+    return QJ.on(el, 'keypress', restrictNumeric);
+  };
+
+  Payment.cardExpiryVal = function(el) {
+    return Payment.fns.cardExpiryVal(QJ.val(el));
+  };
+
+  Payment.formatCardCVC = function(el) {
+    Payment.restrictNumeric(el);
+    QJ.on(el, 'keypress', restrictCVC);
+    return el;
+  };
+
+  Payment.formatCardExpiry = function(el) {
+    var month, year;
+    Payment.restrictNumeric(el);
+    if (el.length && el.length === 2) {
+      month = el[0], year = el[1];
+      this.formatCardExpiryMultiple(month, year);
+    } else {
+      QJ.on(el, 'keypress', restrictCombinedExpiry);
+      QJ.on(el, 'keypress', formatExpiry);
+      QJ.on(el, 'keypress', formatForwardSlash);
+      QJ.on(el, 'keypress', formatForwardExpiry);
+      QJ.on(el, 'keydown', formatBackExpiry);
+    }
+    return el;
+  };
+
+  Payment.formatCardExpiryMultiple = function(month, year) {
+    QJ.on(month, 'keypress', restrictMonthExpiry);
+    QJ.on(month, 'keypress', formatMonthExpiry);
+    return QJ.on(year, 'keypress', restrictYearExpiry);
+  };
+
+  Payment.formatCardNumber = function(el) {
+    Payment.restrictNumeric(el);
+    QJ.on(el, 'keypress', restrictCardNumber);
+    QJ.on(el, 'keypress', formatCardNumber);
+    QJ.on(el, 'keydown', formatBackCardNumber);
+    QJ.on(el, 'keyup', setCardType);
+    QJ.on(el, 'paste', reFormatCardNumber);
+    return el;
+  };
+
+  Payment.getCardArray = function() {
+    return cards;
+  };
+
+  Payment.setCardArray = function(cardArray) {
+    cards = cardArray;
+    return true;
+  };
+
+  Payment.addToCardArray = function(cardObject) {
+    return cards.push(cardObject);
+  };
+
+  Payment.removeFromCardArray = function(type) {
+    var key, value;
+    for (key in cards) {
+      value = cards[key];
+      if (value.type === type) {
+        cards.splice(key, 1);
+      }
+    }
+    return true;
+  };
+
+  return Payment;
+
+})();
+
+module.exports = Payment;
+
+global.Payment = Payment;
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"qj/src/qj.coffee":5}],5:[function(_dereq_,module,exports){
 var QJ, rreturn, rtrim;
 
 QJ = function(selector) {
@@ -924,18 +1515,18 @@ QJ.normalizeEvent = function(e) {
 };
 
 QJ.on = function(element, eventName, callback) {
-  var el, multEventName, originalCallback, _i, _j, _len, _len1, _ref;
+  var el, i, j, len, len1, multEventName, originalCallback, ref;
   if (element.length) {
-    for (_i = 0, _len = element.length; _i < _len; _i++) {
-      el = element[_i];
+    for (i = 0, len = element.length; i < len; i++) {
+      el = element[i];
       QJ.on(el, eventName, callback);
     }
     return;
   }
   if (eventName.match(" ")) {
-    _ref = eventName.split(" ");
-    for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-      multEventName = _ref[_j];
+    ref = eventName.split(" ");
+    for (j = 0, len1 = ref.length; j < len1; j++) {
+      multEventName = ref[j];
       QJ.on(element, multEventName, callback);
     }
     return;
@@ -959,13 +1550,13 @@ QJ.addClass = function(el, className) {
   var e;
   if (el.length) {
     return (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = el.length; _i < _len; _i++) {
-        e = el[_i];
-        _results.push(QJ.addClass(e, className));
+      var i, len, results;
+      results = [];
+      for (i = 0, len = el.length; i < len; i++) {
+        e = el[i];
+        results.push(QJ.addClass(e, className));
       }
-      return _results;
+      return results;
     })();
   }
   if (el.classList) {
@@ -976,11 +1567,11 @@ QJ.addClass = function(el, className) {
 };
 
 QJ.hasClass = function(el, className) {
-  var e, hasClass, _i, _len;
+  var e, hasClass, i, len;
   if (el.length) {
     hasClass = true;
-    for (_i = 0, _len = el.length; _i < _len; _i++) {
-      e = el[_i];
+    for (i = 0, len = el.length; i < len; i++) {
+      e = el[i];
       hasClass = hasClass && QJ.hasClass(e, className);
     }
     return hasClass;
@@ -993,26 +1584,26 @@ QJ.hasClass = function(el, className) {
 };
 
 QJ.removeClass = function(el, className) {
-  var cls, e, _i, _len, _ref, _results;
+  var cls, e, i, len, ref, results;
   if (el.length) {
     return (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = el.length; _i < _len; _i++) {
-        e = el[_i];
-        _results.push(QJ.removeClass(e, className));
+      var i, len, results;
+      results = [];
+      for (i = 0, len = el.length; i < len; i++) {
+        e = el[i];
+        results.push(QJ.removeClass(e, className));
       }
-      return _results;
+      return results;
     })();
   }
   if (el.classList) {
-    _ref = className.split(' ');
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      cls = _ref[_i];
-      _results.push(el.classList.remove(cls));
+    ref = className.split(' ');
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      cls = ref[i];
+      results.push(el.classList.remove(cls));
     }
-    return _results;
+    return results;
   } else {
     return el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
   }
@@ -1022,13 +1613,13 @@ QJ.toggleClass = function(el, className, bool) {
   var e;
   if (el.length) {
     return (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = el.length; _i < _len; _i++) {
-        e = el[_i];
-        _results.push(QJ.toggleClass(e, className, bool));
+      var i, len, results;
+      results = [];
+      for (i = 0, len = el.length; i < len; i++) {
+        e = el[i];
+        results.push(QJ.toggleClass(e, className, bool));
       }
-      return _results;
+      return results;
     })();
   }
   if (bool) {
@@ -1044,13 +1635,13 @@ QJ.append = function(el, toAppend) {
   var e;
   if (el.length) {
     return (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = el.length; _i < _len; _i++) {
-        e = el[_i];
-        _results.push(QJ.append(e, toAppend));
+      var i, len, results;
+      results = [];
+      for (i = 0, len = el.length; i < len; i++) {
+        e = el[i];
+        results.push(QJ.append(e, toAppend));
       }
-      return _results;
+      return results;
     })();
   }
   return el.insertAdjacentHTML('beforeend', toAppend);
@@ -1064,13 +1655,13 @@ QJ.find = function(el, selector) {
 };
 
 QJ.trigger = function(el, name, data) {
-  var e, ev;
+  var e, error, ev;
   try {
     ev = new CustomEvent(name, {
       detail: data
     });
-  } catch (_error) {
-    e = _error;
+  } catch (error) {
+    e = error;
     ev = document.createEvent('CustomEvent');
     if (ev.initCustomEvent) {
       ev.initCustomEvent(name, true, true, data);
@@ -1084,13 +1675,9 @@ QJ.trigger = function(el, name, data) {
 module.exports = QJ;
 
 
-},{}]},{},[1])
-(1)
-});
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
-module.exports = require('cssify');
-},{"cssify":6}],6:[function(require,module,exports){
+},{}],6:[function(_dereq_,module,exports){
+module.exports = _dereq_('cssify');
+},{"cssify":7}],7:[function(_dereq_,module,exports){
 module.exports = function (css, customDocument) {
   var doc = customDocument || document;
   if (doc.createStyleSheet) {
@@ -1129,22 +1716,22 @@ module.exports.byUrl = function(url) {
   }
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 (function (global){
 var Card, QJ, extend, payment;
 
-require('../scss/card.scss');
+_dereq_('../scss/card.scss');
 
-QJ = require('qj');
+QJ = _dereq_('qj/src/qj.coffee');
 
-payment = require('./payment/src/payment.coffee');
+payment = _dereq_('payment/src/payment');
 
-extend = require('node.extend');
+extend = _dereq_('node.extend');
 
 Card = (function() {
   var bindVal;
 
-  Card.prototype.cardTemplate = '' + '<div class="jp-card-container">' + '<div class="jp-card">' + '<div class="jp-card-front">' + '<div class="jp-card-logo jp-card-visa">visa</div>' + '<div class="jp-card-logo jp-card-mastercard">MasterCard</div>' + '<div class="jp-card-logo jp-card-maestro">Maestro</div>' + '<div class="jp-card-logo jp-card-amex"></div>' + '<div class="jp-card-logo jp-card-discover">discover</div>' + '<div class="jp-card-logo jp-card-dankort"><div class="dk"><div class="d"></div><div class="k"></div></div></div>' + '<div class="jp-card-lower">' + '<div class="jp-card-shiny"></div>' + '<div class="jp-card-cvc jp-card-display">{{cvc}}</div>' + '<div class="jp-card-number jp-card-display">{{number}}</div>' + '<div class="jp-card-name jp-card-display">{{name}}</div>' + '<div class="jp-card-expiry jp-card-display" data-before="{{monthYear}}" data-after="{{validDate}}">{{expiry}}</div>' + '</div>' + '</div>' + '<div class="jp-card-back">' + '<div class="jp-card-bar"></div>' + '<div class="jp-card-cvc jp-card-display">{{cvc}}</div>' + '<div class="jp-card-shiny"></div>' + '</div>' + '</div>' + '</div>';
+  Card.prototype.cardTemplate = '' + '<div class="jp-card-container">' + '<div class="jp-card">' + '<div class="jp-card-front">' + '<div class="jp-card-logo jp-card-elo">' + '<div class="e">e</div>' + '<div class="l">l</div>' + '<div class="o">o</div>' + '</div>' + '<div class="jp-card-logo jp-card-visa">visa</div>' + '<div class="jp-card-logo jp-card-mastercard">MasterCard</div>' + '<div class="jp-card-logo jp-card-maestro">Maestro</div>' + '<div class="jp-card-logo jp-card-amex"></div>' + '<div class="jp-card-logo jp-card-discover">discover</div>' + '<div class="jp-card-logo jp-card-dankort"><div class="dk"><div class="d"></div><div class="k"></div></div></div>' + '<div class="jp-card-lower">' + '<div class="jp-card-shiny"></div>' + '<div class="jp-card-cvc jp-card-display">{{cvc}}</div>' + '<div class="jp-card-number jp-card-display">{{number}}</div>' + '<div class="jp-card-name jp-card-display">{{name}}</div>' + '<div class="jp-card-expiry jp-card-display" data-before="{{monthYear}}" data-after="{{validDate}}">{{expiry}}</div>' + '</div>' + '</div>' + '<div class="jp-card-back">' + '<div class="jp-card-bar"></div>' + '<div class="jp-card-cvc jp-card-display">{{cvc}}</div>' + '<div class="jp-card-shiny"></div>' + '</div>' + '</div>' + '</div>';
 
   Card.prototype.template = function(tpl, data) {
     return tpl.replace(/\{\{(.*?)\}\}/g, function(match, key, str) {
@@ -1152,7 +1739,7 @@ Card = (function() {
     });
   };
 
-  Card.prototype.cardTypes = ['jp-card-amex', 'jp-card-dankort', 'jp-card-dinersclub', 'jp-card-discover', 'jp-card-jcb', 'jp-card-laser', 'jp-card-maestro', 'jp-card-mastercard', 'jp-card-unionpay', 'jp-card-visa', 'jp-card-visaelectron'];
+  Card.prototype.cardTypes = ['jp-card-amex', 'jp-card-dankort', 'jp-card-dinersclub', 'jp-card-discover', 'jp-card-jcb', 'jp-card-laser', 'jp-card-maestro', 'jp-card-mastercard', 'jp-card-unionpay', 'jp-card-visa', 'jp-card-visaelectron', 'jp-card-elo'];
 
   Card.prototype.defaults = {
     formatting: true,
@@ -1205,16 +1792,16 @@ Card = (function() {
   }
 
   Card.prototype.render = function() {
-    var $cardContainer, baseWidth, name, obj, selector, ua, _ref, _ref1;
+    var $cardContainer, baseWidth, name, obj, ref, ref1, selector, ua;
     QJ.append(this.$container, this.template(this.cardTemplate, extend({}, this.options.messages, this.options.placeholders)));
-    _ref = this.options.cardSelectors;
-    for (name in _ref) {
-      selector = _ref[name];
+    ref = this.options.cardSelectors;
+    for (name in ref) {
+      selector = ref[name];
       this["$" + name] = QJ.find(this.$container, selector);
     }
-    _ref1 = this.options.formSelectors;
-    for (name in _ref1) {
-      selector = _ref1[name];
+    ref1 = this.options.formSelectors;
+    for (name in ref1) {
+      selector = ref1[name];
       selector = this.options[name] ? this.options[name] : selector;
       obj = QJ.find(this.$el, selector);
       if (!obj.length && this.options.debug) {
@@ -1225,9 +1812,7 @@ Card = (function() {
     if (this.options.formatting) {
       Payment.formatCardNumber(this.$numberInput);
       Payment.formatCardCVC(this.$cvcInput);
-      if (this.$expiryInput.length === 1) {
-        Payment.formatCardExpiry(this.$expiryInput);
-      }
+      Payment.formatCardExpiry(this.$expiryInput);
     }
     if (this.options.width) {
       $cardContainer = QJ(this.options.cardSelectors.cardContainer)[0];
@@ -1260,9 +1845,7 @@ Card = (function() {
         return val.replace(/(\s+)/g, '');
       }
     ];
-    if (this.$expiryInput.length === 1) {
-      expiryFilters.push(this.validToggler('cardExpiry'));
-    }
+    expiryFilters.push(this.validToggler('cardExpiry'));
     bindVal(this.$expiryInput, this.$expiryDisplay, {
       join: function(text) {
         if (text[0].length === 2 || text[1]) {
@@ -1286,22 +1869,22 @@ Card = (function() {
   };
 
   Card.prototype.handleInitialPlaceholders = function() {
-    var el, name, selector, _ref, _results;
-    _ref = this.options.formSelectors;
-    _results = [];
-    for (name in _ref) {
-      selector = _ref[name];
+    var el, name, ref, results, selector;
+    ref = this.options.formSelectors;
+    results = [];
+    for (name in ref) {
+      selector = ref[name];
       el = this["$" + name];
       if (QJ.val(el)) {
         QJ.trigger(el, 'paste');
-        _results.push(setTimeout(function() {
+        results.push(setTimeout(function() {
           return QJ.trigger(el, 'keyup');
         }));
       } else {
-        _results.push(void 0);
+        results.push(void 0);
       }
     }
-    return _results;
+    return results;
   };
 
   Card.prototype.handle = function(fn) {
@@ -1392,13 +1975,13 @@ Card = (function() {
       };
     }
     outDefaults = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = out.length; _i < _len; _i++) {
-        o = out[_i];
-        _results.push(o.textContent);
+      var j, len, results;
+      results = [];
+      for (j = 0, len = out.length; j < len; j++) {
+        o = out[j];
+        results.push(o.textContent);
       }
-      return _results;
+      return results;
     })();
     QJ.on(el, 'focus', function() {
       return QJ.addClass(out, 'jp-card-focused');
@@ -1407,37 +1990,37 @@ Card = (function() {
       return QJ.removeClass(out, 'jp-card-focused');
     });
     QJ.on(el, 'keyup change paste', function(e) {
-      var elem, filter, i, join, outEl, outVal, val, _i, _j, _len, _len1, _ref, _results;
+      var elem, filter, i, j, join, k, len, len1, outEl, outVal, ref, results, val;
       val = (function() {
-        var _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = el.length; _i < _len; _i++) {
-          elem = el[_i];
-          _results.push(QJ.val(elem));
+        var j, len, results;
+        results = [];
+        for (j = 0, len = el.length; j < len; j++) {
+          elem = el[j];
+          results.push(QJ.val(elem));
         }
-        return _results;
+        return results;
       })();
       join = opts.join(val);
       val = val.join(join);
       if (val === join) {
         val = "";
       }
-      _ref = opts.filters;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        filter = _ref[_i];
+      ref = opts.filters;
+      for (j = 0, len = ref.length; j < len; j++) {
+        filter = ref[j];
         val = filter(val, el, out);
       }
-      _results = [];
-      for (i = _j = 0, _len1 = out.length; _j < _len1; i = ++_j) {
+      results = [];
+      for (i = k = 0, len1 = out.length; k < len1; i = ++k) {
         outEl = out[i];
         if (opts.fill) {
           outVal = val + outDefaults[i].substring(val.length);
         } else {
           outVal = val || outDefaults[i];
         }
-        _results.push(outEl.textContent = outVal);
+        results.push(outEl.textContent = outVal);
       }
-      return _results;
+      return results;
     });
     return el;
   };
@@ -1450,548 +2033,9 @@ module.exports = Card;
 
 global.Card = Card;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../scss/card.scss":9,"./payment/src/payment.coffee":8,"node.extend":1,"qj":4}],8:[function(require,module,exports){
-(function (global){
-var Payment, QJ, cardFromNumber, cardFromType, cards, defaultFormat, formatBackCardNumber, formatBackExpiry, formatCardNumber, formatExpiry, formatForwardExpiry, formatForwardSlash, hasTextSelected, luhnCheck, reFormatCardNumber, restrictCVC, restrictCardNumber, restrictExpiry, restrictNumeric, setCardType,
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-QJ = require('qj');
-
-defaultFormat = /(\d{1,4})/g;
-
-cards = [
-  {
-    type: 'amex',
-    pattern: /^3[47]/,
-    format: /(\d{1,4})(\d{1,6})?(\d{1,5})?/,
-    length: [15],
-    cvcLength: [4],
-    luhn: true
-  }, {
-    type: 'dankort',
-    pattern: /^5019/,
-    format: defaultFormat,
-    length: [16],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'dinersclub',
-    pattern: /^(36|38|30[0-5])/,
-    format: defaultFormat,
-    length: [14],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'discover',
-    pattern: /^(6011|65|64[4-9]|622)/,
-    format: defaultFormat,
-    length: [16],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'jcb',
-    pattern: /^35/,
-    format: defaultFormat,
-    length: [16],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'laser',
-    pattern: /^(6706|6771|6709)/,
-    format: defaultFormat,
-    length: [16, 17, 18, 19],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'maestro',
-    pattern: /^(5018|5020|5038|6304|6703|6759|676[1-3])/,
-    format: defaultFormat,
-    length: [12, 13, 14, 15, 16, 17, 18, 19],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'mastercard',
-    pattern: /^5[1-5]/,
-    format: defaultFormat,
-    length: [16],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'unionpay',
-    pattern: /^62/,
-    format: defaultFormat,
-    length: [16, 17, 18, 19],
-    cvcLength: [3],
-    luhn: false
-  }, {
-    type: 'visaelectron',
-    pattern: /^4(026|17500|405|508|844|91[37])/,
-    format: defaultFormat,
-    length: [16],
-    cvcLength: [3],
-    luhn: true
-  }, {
-    type: 'visa',
-    pattern: /^4/,
-    format: defaultFormat,
-    length: [13, 14, 15, 16],
-    cvcLength: [3],
-    luhn: true
-  }
-];
-
-cardFromNumber = function(num) {
-  var card, _i, _len;
-  num = (num + '').replace(/\D/g, '');
-  for (_i = 0, _len = cards.length; _i < _len; _i++) {
-    card = cards[_i];
-    if (card.pattern.test(num)) {
-      return card;
-    }
-  }
-};
-
-cardFromType = function(type) {
-  var card, _i, _len;
-  for (_i = 0, _len = cards.length; _i < _len; _i++) {
-    card = cards[_i];
-    if (card.type === type) {
-      return card;
-    }
-  }
-};
-
-luhnCheck = function(num) {
-  var digit, digits, odd, sum, _i, _len;
-  odd = true;
-  sum = 0;
-  digits = (num + '').split('').reverse();
-  for (_i = 0, _len = digits.length; _i < _len; _i++) {
-    digit = digits[_i];
-    digit = parseInt(digit, 10);
-    if ((odd = !odd)) {
-      digit *= 2;
-    }
-    if (digit > 9) {
-      digit -= 9;
-    }
-    sum += digit;
-  }
-  return sum % 10 === 0;
-};
-
-hasTextSelected = function(target) {
-  var _ref;
-  if ((target.selectionStart != null) && target.selectionStart !== target.selectionEnd) {
-    return true;
-  }
-  if ((typeof document !== "undefined" && document !== null ? (_ref = document.selection) != null ? _ref.createRange : void 0 : void 0) != null) {
-    if (document.selection.createRange().text) {
-      return true;
-    }
-  }
-  return false;
-};
-
-reFormatCardNumber = function(e) {
-  return setTimeout((function(_this) {
-    return function() {
-      var target, value;
-      target = e.target;
-      value = QJ.val(target);
-      value = Payment.fns.formatCardNumber(value);
-      return QJ.val(target, value);
-    };
-  })(this));
-};
-
-formatCardNumber = function(e) {
-  var card, digit, length, re, target, upperLength, value;
-  digit = String.fromCharCode(e.which);
-  if (!/^\d+$/.test(digit)) {
-    return;
-  }
-  target = e.target;
-  value = QJ.val(target);
-  card = cardFromNumber(value + digit);
-  length = (value.replace(/\D/g, '') + digit).length;
-  upperLength = 16;
-  if (card) {
-    upperLength = card.length[card.length.length - 1];
-  }
-  if (length >= upperLength) {
-    return;
-  }
-  if ((target.selectionStart != null) && target.selectionStart !== value.length) {
-    return;
-  }
-  if (card && card.type === 'amex') {
-    re = /^(\d{4}|\d{4}\s\d{6})$/;
-  } else {
-    re = /(?:^|\s)(\d{4})$/;
-  }
-  if (re.test(value)) {
-    e.preventDefault();
-    return QJ.val(target, value + ' ' + digit);
-  } else if (re.test(value + digit)) {
-    e.preventDefault();
-    return QJ.val(target, value + digit + ' ');
-  }
-};
-
-formatBackCardNumber = function(e) {
-  var target, value;
-  target = e.target;
-  value = QJ.val(target);
-  if (e.meta) {
-    return;
-  }
-  if (e.which !== 8) {
-    return;
-  }
-  if ((target.selectionStart != null) && target.selectionStart !== value.length) {
-    return;
-  }
-  if (/\d\s$/.test(value)) {
-    e.preventDefault();
-    return QJ.val(target, value.replace(/\d\s$/, ''));
-  } else if (/\s\d?$/.test(value)) {
-    e.preventDefault();
-    return QJ.val(target, value.replace(/\s\d?$/, ''));
-  }
-};
-
-formatExpiry = function(e) {
-  var digit, target, val;
-  digit = String.fromCharCode(e.which);
-  if (!/^\d+$/.test(digit)) {
-    return;
-  }
-  target = e.target;
-  val = QJ.val(target) + digit;
-  if (/^\d$/.test(val) && (val !== '0' && val !== '1')) {
-    e.preventDefault();
-    return QJ.val(target, "0" + val + " / ");
-  } else if (/^\d\d$/.test(val)) {
-    e.preventDefault();
-    return QJ.val(target, "" + val + " / ");
-  }
-};
-
-formatForwardExpiry = function(e) {
-  var digit, target, val;
-  digit = String.fromCharCode(e.which);
-  if (!/^\d+$/.test(digit)) {
-    return;
-  }
-  target = e.target;
-  val = QJ.val(target);
-  if (/^\d\d$/.test(val)) {
-    return QJ.val(target, "" + val + " / ");
-  }
-};
-
-formatForwardSlash = function(e) {
-  var slash, target, val;
-  slash = String.fromCharCode(e.which);
-  if (slash !== '/') {
-    return;
-  }
-  target = e.target;
-  val = QJ.val(target);
-  if (/^\d$/.test(val) && val !== '0') {
-    return QJ.val(target, "0" + val + " / ");
-  }
-};
-
-formatBackExpiry = function(e) {
-  var target, value;
-  if (e.metaKey) {
-    return;
-  }
-  target = e.target;
-  value = QJ.val(target);
-  if (e.which !== 8) {
-    return;
-  }
-  if ((target.selectionStart != null) && target.selectionStart !== value.length) {
-    return;
-  }
-  if (/\d(\s|\/)+$/.test(value)) {
-    e.preventDefault();
-    return QJ.val(target, value.replace(/\d(\s|\/)*$/, ''));
-  } else if (/\s\/\s?\d?$/.test(value)) {
-    e.preventDefault();
-    return QJ.val(target, value.replace(/\s\/\s?\d?$/, ''));
-  }
-};
-
-restrictNumeric = function(e) {
-  var input;
-  if (e.metaKey || e.ctrlKey) {
-    return true;
-  }
-  if (e.which === 32) {
-    return e.preventDefault();
-  }
-  if (e.which === 0) {
-    return true;
-  }
-  if (e.which < 33) {
-    return true;
-  }
-  input = String.fromCharCode(e.which);
-  if (!/[\d\s]/.test(input)) {
-    return e.preventDefault();
-  }
-};
-
-restrictCardNumber = function(e) {
-  var card, digit, target, value;
-  target = e.target;
-  digit = String.fromCharCode(e.which);
-  if (!/^\d+$/.test(digit)) {
-    return;
-  }
-  if (hasTextSelected(target)) {
-    return;
-  }
-  value = (QJ.val(target) + digit).replace(/\D/g, '');
-  card = cardFromNumber(value);
-  if (card) {
-    if (!(value.length <= card.length[card.length.length - 1])) {
-      return e.preventDefault();
-    }
-  } else {
-    if (!(value.length <= 16)) {
-      return e.preventDefault();
-    }
-  }
-};
-
-restrictExpiry = function(e) {
-  var digit, target, value;
-  target = e.target;
-  digit = String.fromCharCode(e.which);
-  if (!/^\d+$/.test(digit)) {
-    return;
-  }
-  if (hasTextSelected(target)) {
-    return;
-  }
-  value = QJ.val(target) + digit;
-  value = value.replace(/\D/g, '');
-  if (value.length > 6) {
-    return e.preventDefault();
-  }
-};
-
-restrictCVC = function(e) {
-  var digit, target, val;
-  target = e.target;
-  digit = String.fromCharCode(e.which);
-  if (!/^\d+$/.test(digit)) {
-    return;
-  }
-  val = QJ.val(target) + digit;
-  if (!(val.length <= 4)) {
-    return e.preventDefault();
-  }
-};
-
-setCardType = function(e) {
-  var allTypes, card, cardType, target, val;
-  target = e.target;
-  val = QJ.val(target);
-  cardType = Payment.fns.cardType(val) || 'unknown';
-  if (!QJ.hasClass(target, cardType)) {
-    allTypes = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = cards.length; _i < _len; _i++) {
-        card = cards[_i];
-        _results.push(card.type);
-      }
-      return _results;
-    })();
-    QJ.removeClass(target, 'unknown');
-    QJ.removeClass(target, allTypes.join(' '));
-    QJ.addClass(target, cardType);
-    QJ.toggleClass(target, 'identified', cardType !== 'unknown');
-    return QJ.trigger(target, 'payment.cardType', cardType);
-  }
-};
-
-Payment = (function() {
-  function Payment() {}
-
-  Payment.fns = {
-    cardExpiryVal: function(value) {
-      var month, prefix, year, _ref;
-      value = value.replace(/\s/g, '');
-      _ref = value.split('/', 2), month = _ref[0], year = _ref[1];
-      if ((year != null ? year.length : void 0) === 2 && /^\d+$/.test(year)) {
-        prefix = (new Date).getFullYear();
-        prefix = prefix.toString().slice(0, 2);
-        year = prefix + year;
-      }
-      month = parseInt(month, 10);
-      year = parseInt(year, 10);
-      return {
-        month: month,
-        year: year
-      };
-    },
-    validateCardNumber: function(num) {
-      var card, _ref;
-      num = (num + '').replace(/\s+|-/g, '');
-      if (!/^\d+$/.test(num)) {
-        return false;
-      }
-      card = cardFromNumber(num);
-      if (!card) {
-        return false;
-      }
-      return (_ref = num.length, __indexOf.call(card.length, _ref) >= 0) && (card.luhn === false || luhnCheck(num));
-    },
-    validateCardExpiry: function(month, year) {
-      var currentTime, expiry, prefix, _ref;
-      if (typeof month === 'object' && 'month' in month) {
-        _ref = month, month = _ref.month, year = _ref.year;
-      }
-      if (!(month && year)) {
-        return false;
-      }
-      month = QJ.trim(month);
-      year = QJ.trim(year);
-      if (!/^\d+$/.test(month)) {
-        return false;
-      }
-      if (!/^\d+$/.test(year)) {
-        return false;
-      }
-      if (!(parseInt(month, 10) <= 12)) {
-        return false;
-      }
-      if (year.length === 2) {
-        prefix = (new Date).getFullYear();
-        prefix = prefix.toString().slice(0, 2);
-        year = prefix + year;
-      }
-      expiry = new Date(year, month);
-      currentTime = new Date;
-      expiry.setMonth(expiry.getMonth() - 1);
-      expiry.setMonth(expiry.getMonth() + 1, 1);
-      return expiry > currentTime;
-    },
-    validateCardCVC: function(cvc, type) {
-      var _ref, _ref1;
-      cvc = QJ.trim(cvc);
-      if (!/^\d+$/.test(cvc)) {
-        return false;
-      }
-      if (type && cardFromType(type)) {
-        return _ref = cvc.length, __indexOf.call((_ref1 = cardFromType(type)) != null ? _ref1.cvcLength : void 0, _ref) >= 0;
-      } else {
-        return cvc.length >= 3 && cvc.length <= 4;
-      }
-    },
-    cardType: function(num) {
-      var _ref;
-      if (!num) {
-        return null;
-      }
-      return ((_ref = cardFromNumber(num)) != null ? _ref.type : void 0) || null;
-    },
-    formatCardNumber: function(num) {
-      var card, groups, upperLength, _ref;
-      card = cardFromNumber(num);
-      if (!card) {
-        return num;
-      }
-      upperLength = card.length[card.length.length - 1];
-      num = num.replace(/\D/g, '');
-      num = num.slice(0, +upperLength + 1 || 9e9);
-      if (card.format.global) {
-        return (_ref = num.match(card.format)) != null ? _ref.join(' ') : void 0;
-      } else {
-        groups = card.format.exec(num);
-        if (groups != null) {
-          groups.shift();
-        }
-        return groups != null ? groups.join(' ') : void 0;
-      }
-    }
-  };
-
-  Payment.restrictNumeric = function(el) {
-    return QJ.on(el, 'keypress', restrictNumeric);
-  };
-
-  Payment.cardExpiryVal = function(el) {
-    return Payment.fns.cardExpiryVal(QJ.val(el));
-  };
-
-  Payment.formatCardCVC = function(el) {
-    Payment.restrictNumeric(el);
-    QJ.on(el, 'keypress', restrictCVC);
-    return el;
-  };
-
-  Payment.formatCardExpiry = function(el) {
-    Payment.restrictNumeric(el);
-    QJ.on(el, 'keypress', restrictExpiry);
-    QJ.on(el, 'keypress', formatExpiry);
-    QJ.on(el, 'keypress', formatForwardSlash);
-    QJ.on(el, 'keypress', formatForwardExpiry);
-    QJ.on(el, 'keydown', formatBackExpiry);
-    return el;
-  };
-
-  Payment.formatCardNumber = function(el) {
-    Payment.restrictNumeric(el);
-    QJ.on(el, 'keypress', restrictCardNumber);
-    QJ.on(el, 'keypress', formatCardNumber);
-    QJ.on(el, 'keydown', formatBackCardNumber);
-    QJ.on(el, 'keyup', setCardType);
-    QJ.on(el, 'paste', reFormatCardNumber);
-    return el;
-  };
-
-  Payment.getCardArray = function() {
-    return cards;
-  };
-
-  Payment.setCardArray = function(cardArray) {
-    cards = cardArray;
-    return true;
-  };
-
-  Payment.addToCardArray = function(cardObject) {
-    return cards.push(cardObject);
-  };
-
-  Payment.removeFromCardArray = function(type) {
-    var key, value;
-    for (key in cards) {
-      value = cards[key];
-      if (value.type === type) {
-        cards.splice(key, 1);
-      }
-    }
-    return true;
-  };
-
-  return Payment;
-
-})();
-
-module.exports = Payment;
-
-global.Payment = Payment;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"qj":4}],9:[function(require,module,exports){
-module.exports = require('sassify')('.jp-card.jp-card-safari.jp-card-identified .jp-card-front:before, .jp-card.jp-card-safari.jp-card-identified .jp-card-back:before {   background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), -webkit-linear-gradient(-245deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);   background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), linear-gradient(-25deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%); }  .jp-card.jp-card-ie-10.jp-card-flipped, .jp-card.jp-card-ie-11.jp-card-flipped {   -webkit-transform: 0deg;   -moz-transform: 0deg;   -ms-transform: 0deg;   -o-transform: 0deg;   transform: 0deg; }   .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-front, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-front {     -webkit-transform: rotateY(0deg);     -moz-transform: rotateY(0deg);     -ms-transform: rotateY(0deg);     -o-transform: rotateY(0deg);     transform: rotateY(0deg); }   .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back {     -webkit-transform: rotateY(0deg);     -moz-transform: rotateY(0deg);     -ms-transform: rotateY(0deg);     -o-transform: rotateY(0deg);     transform: rotateY(0deg); }     .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back:after, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back:after {       left: 18%; }     .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back .jp-card-cvc, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back .jp-card-cvc {       -webkit-transform: rotateY(180deg);       -moz-transform: rotateY(180deg);       -ms-transform: rotateY(180deg);       -o-transform: rotateY(180deg);       transform: rotateY(180deg);       left: 5%; }     .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back .jp-card-shiny, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back .jp-card-shiny {       left: 84%; }       .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back .jp-card-shiny:after, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back .jp-card-shiny:after {         left: -480%;         -webkit-transform: rotateY(180deg);         -moz-transform: rotateY(180deg);         -ms-transform: rotateY(180deg);         -o-transform: rotateY(180deg);         transform: rotateY(180deg); }  .jp-card.jp-card-ie-10.jp-card-amex .jp-card-back, .jp-card.jp-card-ie-11.jp-card-amex .jp-card-back {   display: none; }  .jp-card-logo {   height: 36px;   width: 60px;   font-style: italic; }   .jp-card-logo, .jp-card-logo:before, .jp-card-logo:after {     box-sizing: border-box; }  .jp-card-logo.jp-card-amex {   text-transform: uppercase;   font-size: 4px;   font-weight: bold;   color: white;   background-image: repeating-radial-gradient(circle at center, #FFF 1px, #999 2px);   background-image: repeating-radial-gradient(circle at center, #FFF 1px, #999 2px);   border: 1px solid #EEE; }   .jp-card-logo.jp-card-amex:before, .jp-card-logo.jp-card-amex:after {     width: 28px;     display: block;     position: absolute;     left: 16px; }   .jp-card-logo.jp-card-amex:before {     height: 28px;     content: "american";     top: 3px;     text-align: left;     padding-left: 2px;     padding-top: 11px;     background: #267AC3; }   .jp-card-logo.jp-card-amex:after {     content: "express";     bottom: 11px;     text-align: right;     padding-right: 2px; }  .jp-card.jp-card-amex.jp-card-flipped {   -webkit-transform: none;   -moz-transform: none;   -ms-transform: none;   -o-transform: none;   transform: none; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front:before, .jp-card.jp-card-amex.jp-card-identified .jp-card-back:before {   background-color: #108168; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front .jp-card-logo.jp-card-amex {   opacity: 1; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front .jp-card-cvc {   visibility: visible; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front:after {   opacity: 1; }  .jp-card-logo.jp-card-discover {   background: #FF6600;   color: #111;   text-transform: uppercase;   font-style: normal;   font-weight: bold;   font-size: 10px;   text-align: center;   overflow: hidden;   z-index: 1;   padding-top: 9px;   letter-spacing: .03em;   border: 1px solid #EEE; }   .jp-card-logo.jp-card-discover:before, .jp-card-logo.jp-card-discover:after {     content: " ";     display: block;     position: absolute; }   .jp-card-logo.jp-card-discover:before {     background: white;     width: 200px;     height: 200px;     border-radius: 200px;     bottom: -5%;     right: -80%;     z-index: -1; }   .jp-card-logo.jp-card-discover:after {     width: 8px;     height: 8px;     border-radius: 4px;     top: 10px;     left: 27px;     background-color: #FF6600;     background-image: -webkit-radial-gradient(#FF6600, #fff, , , , , , , , );     background-image: radial-gradient(  #FF6600, #fff, , , , , , , , );     content: "network";     font-size: 4px;     line-height: 24px;     text-indent: -7px; }  .jp-card .jp-card-front .jp-card-logo.jp-card-discover {   right: 12%;   top: 18%; }  .jp-card.jp-card-discover.jp-card-identified .jp-card-front:before, .jp-card.jp-card-discover.jp-card-identified .jp-card-back:before {   background-color: #86B8CF; }  .jp-card.jp-card-discover.jp-card-identified .jp-card-logo.jp-card-discover {   opacity: 1; }  .jp-card.jp-card-discover.jp-card-identified .jp-card-front:after {   -webkit-transition: 400ms;   -moz-transition: 400ms;   transition: 400ms;   content: " ";   display: block;   background-color: #FF6600;   background-image: -webkit-linear-gradient(#FF6600, #ffa366, #FF6600);   background-image: linear-gradient(#FF6600, #ffa366, #FF6600, , , , , , , );   height: 50px;   width: 50px;   border-radius: 25px;   position: absolute;   left: 100%;   top: 15%;   margin-left: -25px;   box-shadow: inset 1px 1px 3px 1px rgba(0, 0, 0, 0.5); }  .jp-card-logo.jp-card-visa {   background: white;   text-transform: uppercase;   color: #1A1876;   text-align: center;   font-weight: bold;   font-size: 15px;   line-height: 18px; }   .jp-card-logo.jp-card-visa:before, .jp-card-logo.jp-card-visa:after {     content: " ";     display: block;     width: 100%;     height: 25%; }   .jp-card-logo.jp-card-visa:before {     background: #1A1876; }   .jp-card-logo.jp-card-visa:after {     background: #E79800; }  .jp-card.jp-card-visa.jp-card-identified .jp-card-front:before, .jp-card.jp-card-visa.jp-card-identified .jp-card-back:before {   background-color: #191278; }  .jp-card.jp-card-visa.jp-card-identified .jp-card-logo.jp-card-visa {   opacity: 1; }  .jp-card-logo.jp-card-mastercard {   color: white;   font-weight: bold;   text-align: center;   font-size: 9px;   line-height: 36px;   z-index: 1;   text-shadow: 1px 1px rgba(0, 0, 0, 0.6); }   .jp-card-logo.jp-card-mastercard:before, .jp-card-logo.jp-card-mastercard:after {     content: " ";     display: block;     width: 36px;     top: 0;     position: absolute;     height: 36px;     border-radius: 18px; }   .jp-card-logo.jp-card-mastercard:before {     left: 0;     background: #FF0000;     z-index: -1; }   .jp-card-logo.jp-card-mastercard:after {     right: 0;     background: #FFAB00;     z-index: -2; }  .jp-card.jp-card-mastercard.jp-card-identified .jp-card-front .jp-card-logo.jp-card-mastercard, .jp-card.jp-card-mastercard.jp-card-identified .jp-card-back .jp-card-logo.jp-card-mastercard {   box-shadow: none; }  .jp-card.jp-card-mastercard.jp-card-identified .jp-card-front:before, .jp-card.jp-card-mastercard.jp-card-identified .jp-card-back:before {   background-color: #0061A8; }  .jp-card.jp-card-mastercard.jp-card-identified .jp-card-logo.jp-card-mastercard {   opacity: 1; }  .jp-card-logo.jp-card-maestro {   color: white;   font-weight: bold;   text-align: center;   font-size: 14px;   line-height: 36px;   z-index: 1;   text-shadow: 1px 1px rgba(0, 0, 0, 0.6); }   .jp-card-logo.jp-card-maestro:before, .jp-card-logo.jp-card-maestro:after {     content: " ";     display: block;     width: 36px;     top: 0;     position: absolute;     height: 36px;     border-radius: 18px; }   .jp-card-logo.jp-card-maestro:before {     left: 0;     background: #0064CB;     z-index: -1; }   .jp-card-logo.jp-card-maestro:after {     right: 0;     background: #CC0000;     z-index: -2; }  .jp-card.jp-card-maestro.jp-card-identified .jp-card-front .jp-card-logo.jp-card-maestro, .jp-card.jp-card-maestro.jp-card-identified .jp-card-back .jp-card-logo.jp-card-maestro {   box-shadow: none; }  .jp-card.jp-card-maestro.jp-card-identified .jp-card-front:before, .jp-card.jp-card-maestro.jp-card-identified .jp-card-back:before {   background-color: #0B2C5F; }  .jp-card.jp-card-maestro.jp-card-identified .jp-card-logo.jp-card-maestro {   opacity: 1; }  .jp-card-logo.jp-card-dankort {   width: 60px;   height: 36px;   padding: 3px;   border-radius: 8px;   border: #000000 1px solid;   background-color: #FFFFFF; }   .jp-card-logo.jp-card-dankort .dk {     position: relative;     width: 100%;     height: 100%;     overflow: hidden; }     .jp-card-logo.jp-card-dankort .dk:before {       background-color: #ED1C24;       content: \'\';       position: absolute;       width: 100%;       height: 100%;       display: block;       border-radius: 6px; }     .jp-card-logo.jp-card-dankort .dk:after {       content: \'\';       position: absolute;       top: 50%;       margin-top: -7.7px;       right: 0;       width: 0;       height: 0;       border-style: solid;       border-width: 7px 7px 10px 0;       border-color: transparent #ED1C24 transparent transparent;       z-index: 1; }   .jp-card-logo.jp-card-dankort .d, .jp-card-logo.jp-card-dankort .k {     position: absolute;     top: 50%;     width: 50%;     display: block;     height: 15.4px;     margin-top: -7.7px;     background: white; }   .jp-card-logo.jp-card-dankort .d {     left: 0;     border-radius: 0 8px 10px 0; }     .jp-card-logo.jp-card-dankort .d:before {       content: \'\';       position: absolute;       top: 50%;       left: 50%;       display: block;       background: #ED1C24;       border-radius: 2px 4px 6px 0px;       height: 5px;       width: 7px;       margin: -3px 0 0 -4px; }   .jp-card-logo.jp-card-dankort .k {     right: 0; }     .jp-card-logo.jp-card-dankort .k:before, .jp-card-logo.jp-card-dankort .k:after {       content: \'\';       position: absolute;       right: 50%;       width: 0;       height: 0;       border-style: solid;       margin-right: -1px; }     .jp-card-logo.jp-card-dankort .k:before {       top: 0;       border-width: 8px 5px 0 0;       border-color: #ED1C24 transparent transparent transparent; }     .jp-card-logo.jp-card-dankort .k:after {       bottom: 0;       border-width: 0 5px 8px 0;       border-color: transparent transparent #ED1C24 transparent; }  .jp-card.jp-card-dankort.jp-card-identified .jp-card-front:before, .jp-card.jp-card-dankort.jp-card-identified .jp-card-back:before {   background-color: #0055C7; }  .jp-card.jp-card-dankort.jp-card-identified .jp-card-logo.jp-card-dankort {   opacity: 1; }  .jp-card-container {   -webkit-perspective: 1000px;   -moz-perspective: 1000px;   perspective: 1000px;   width: 350px;   max-width: 100%;   height: 200px;   margin: auto;   z-index: 1;   position: relative; }  .jp-card {   font-family: "Helvetica Neue";   line-height: 1;   position: relative;   width: 100%;   height: 100%;   min-width: 315px;   border-radius: 10px;   -webkit-transform-style: preserve-3d;   -moz-transform-style: preserve-3d;   -ms-transform-style: preserve-3d;   -o-transform-style: preserve-3d;   transform-style: preserve-3d;   -webkit-transition: all 400ms linear;   -moz-transition: all 400ms linear;   transition: all 400ms linear; }   .jp-card > *, .jp-card > *:before, .jp-card > *:after {     -moz-box-sizing: border-box;     -webkit-box-sizing: border-box;     box-sizing: border-box;     font-family: inherit; }   .jp-card.jp-card-flipped {     -webkit-transform: rotateY(180deg);     -moz-transform: rotateY(180deg);     -ms-transform: rotateY(180deg);     -o-transform: rotateY(180deg);     transform: rotateY(180deg); }   .jp-card .jp-card-front, .jp-card .jp-card-back {     -webkit-backface-visibility: hidden;     backface-visibility: hidden;     -webkit-transform-style: preserve-3d;     -moz-transform-style: preserve-3d;     -ms-transform-style: preserve-3d;     -o-transform-style: preserve-3d;     transform-style: preserve-3d;     -webkit-transition: all 400ms linear;     -moz-transition: all 400ms linear;     transition: all 400ms linear;     width: 100%;     height: 100%;     position: absolute;     top: 0;     left: 0;     overflow: hidden;     border-radius: 10px;     background: #DDD; }     .jp-card .jp-card-front:before, .jp-card .jp-card-back:before {       content: " ";       display: block;       position: absolute;       width: 100%;       height: 100%;       top: 0;       left: 0;       opacity: 0;       border-radius: 10px;       -webkit-transition: all 400ms ease;       -moz-transition: all 400ms ease;       transition: all 400ms ease; }     .jp-card .jp-card-front:after, .jp-card .jp-card-back:after {       content: " ";       display: block; }     .jp-card .jp-card-front .jp-card-display, .jp-card .jp-card-back .jp-card-display {       color: white;       font-weight: normal;       opacity: 0.5;       -webkit-transition: opacity 400ms linear;       -moz-transition: opacity 400ms linear;       transition: opacity 400ms linear; }       .jp-card .jp-card-front .jp-card-display.jp-card-focused, .jp-card .jp-card-back .jp-card-display.jp-card-focused {         opacity: 1;         font-weight: 700; }     .jp-card .jp-card-front .jp-card-cvc, .jp-card .jp-card-back .jp-card-cvc {       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       font-size: 14px; }     .jp-card .jp-card-front .jp-card-shiny, .jp-card .jp-card-back .jp-card-shiny {       width: 50px;       height: 35px;       border-radius: 5px;       background: #CCC;       position: relative; }       .jp-card .jp-card-front .jp-card-shiny:before, .jp-card .jp-card-back .jp-card-shiny:before {         content: " ";         display: block;         width: 70%;         height: 60%;         border-top-right-radius: 5px;         border-bottom-right-radius: 5px;         background: #d9d9d9;         position: absolute;         top: 20%; }   .jp-card .jp-card-front .jp-card-logo {     position: absolute;     opacity: 0;     right: 5%;     top: 8%;     -webkit-transition: 400ms;     -moz-transition: 400ms;     transition: 400ms; }   .jp-card .jp-card-front .jp-card-lower {     width: 80%;     position: absolute;     left: 10%;     bottom: 30px; }     @media only screen and (max-width: 480px) {       .jp-card .jp-card-front .jp-card-lower {         width: 90%;         left: 5%; } }     .jp-card .jp-card-front .jp-card-lower .jp-card-cvc {       visibility: hidden;       float: right;       position: relative;       bottom: 5px; }     .jp-card .jp-card-front .jp-card-lower .jp-card-number {       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       font-size: 24px;       clear: both;       margin-bottom: 30px; }     .jp-card .jp-card-front .jp-card-lower .jp-card-expiry {       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       letter-spacing: 0em;       position: relative;       float: right;       width: 25%; }       .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:before, .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:after {         font-family: "Helvetica Neue";         font-weight: bold;         font-size: 7px;         white-space: pre;         display: block;         opacity: .5; }       .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:before {         content: attr(data-before);         margin-bottom: 2px;         font-size: 7px;         text-transform: uppercase; }       .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:after {         position: absolute;         content: attr(data-after);         text-align: right;         right: 100%;         margin-right: 5px;         margin-top: 2px;         bottom: 0; }     .jp-card .jp-card-front .jp-card-lower .jp-card-name {       text-transform: uppercase;       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       font-size: 20px;       max-height: 45px;       position: absolute;       bottom: 0;       width: 190px;       display: -webkit-box;       -webkit-line-clamp: 2;       -webkit-box-orient: horizontal;       overflow: hidden;       text-overflow: ellipsis; }   .jp-card .jp-card-back {     -webkit-transform: rotateY(180deg);     -moz-transform: rotateY(180deg);     -ms-transform: rotateY(180deg);     -o-transform: rotateY(180deg);     transform: rotateY(180deg); }     .jp-card .jp-card-back .jp-card-bar {       background-color: #444;       background-image: -webkit-linear-gradient(#444, #333);       background-image: linear-gradient(#444, #333, , , , , , , , );       width: 100%;       height: 20%;       position: absolute;       top: 10%; }     .jp-card .jp-card-back:after {       content: " ";       display: block;       background-color: #FFF;       background-image: -webkit-linear-gradient(#FFF, #FFF);       background-image: linear-gradient(#FFF, #FFF, , , , , , , , );       width: 80%;       height: 16%;       position: absolute;       top: 40%;       left: 2%; }     .jp-card .jp-card-back .jp-card-cvc {       position: absolute;       top: 40%;       left: 85%;       -webkit-transition-delay: 600ms;       -moz-transition-delay: 600ms;       transition-delay: 600ms; }     .jp-card .jp-card-back .jp-card-shiny {       position: absolute;       top: 66%;       left: 2%; }       .jp-card .jp-card-back .jp-card-shiny:after {         content: "This card has been issued by Jesse Pollak and is licensed for anyone to use anywhere for free.\AIt comes with no warranty.\A For support issues, please visit: github.com/jessepollak/card.";         position: absolute;         left: 120%;         top: 5%;         color: white;         font-size: 7px;         width: 230px;         opacity: .5; }   .jp-card.jp-card-identified {     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); }     .jp-card.jp-card-identified .jp-card-front, .jp-card.jp-card-identified .jp-card-back {       background-color: #000;       background-color: rgba(0, 0, 0, 0.5); }       .jp-card.jp-card-identified .jp-card-front:before, .jp-card.jp-card-identified .jp-card-back:before {         -webkit-transition: all 400ms ease;         -moz-transition: all 400ms ease;         transition: all 400ms ease;         background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), -webkit-linear-gradient(-245deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);         background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), linear-gradient(-25deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);         opacity: 1; }       .jp-card.jp-card-identified .jp-card-front .jp-card-logo, .jp-card.jp-card-identified .jp-card-back .jp-card-logo {         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3); }     .jp-card.jp-card-identified.no-radial-gradient .jp-card-front:before, .jp-card.jp-card-identified.no-radial-gradient .jp-card-back:before {       background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), -webkit-linear-gradient(-245deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);       background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), linear-gradient(-25deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%); } ');;
-},{"sassify":5}]},{},[7]);
+},{"../scss/card.scss":9,"node.extend":1,"payment/src/payment":4,"qj/src/qj.coffee":5}],9:[function(_dereq_,module,exports){
+module.exports = _dereq_('sassify')('.jp-card.jp-card-safari.jp-card-identified .jp-card-front:before, .jp-card.jp-card-safari.jp-card-identified .jp-card-back:before {   background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), -webkit-linear-gradient(-245deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);   background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), linear-gradient(-25deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%); }  .jp-card.jp-card-ie-10.jp-card-flipped, .jp-card.jp-card-ie-11.jp-card-flipped {   -webkit-transform: 0deg;   -moz-transform: 0deg;   -ms-transform: 0deg;   -o-transform: 0deg;   transform: 0deg; }   .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-front, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-front {     -webkit-transform: rotateY(0deg);     -moz-transform: rotateY(0deg);     -ms-transform: rotateY(0deg);     -o-transform: rotateY(0deg);     transform: rotateY(0deg); }   .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back {     -webkit-transform: rotateY(0deg);     -moz-transform: rotateY(0deg);     -ms-transform: rotateY(0deg);     -o-transform: rotateY(0deg);     transform: rotateY(0deg); }     .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back:after, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back:after {       left: 18%; }     .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back .jp-card-cvc, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back .jp-card-cvc {       -webkit-transform: rotateY(180deg);       -moz-transform: rotateY(180deg);       -ms-transform: rotateY(180deg);       -o-transform: rotateY(180deg);       transform: rotateY(180deg);       left: 5%; }     .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back .jp-card-shiny, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back .jp-card-shiny {       left: 84%; }       .jp-card.jp-card-ie-10.jp-card-flipped .jp-card-back .jp-card-shiny:after, .jp-card.jp-card-ie-11.jp-card-flipped .jp-card-back .jp-card-shiny:after {         left: -480%;         -webkit-transform: rotateY(180deg);         -moz-transform: rotateY(180deg);         -ms-transform: rotateY(180deg);         -o-transform: rotateY(180deg);         transform: rotateY(180deg); }  .jp-card.jp-card-ie-10.jp-card-amex .jp-card-back, .jp-card.jp-card-ie-11.jp-card-amex .jp-card-back {   display: none; }  .jp-card-logo {   height: 36px;   width: 60px;   font-style: italic; }   .jp-card-logo, .jp-card-logo:before, .jp-card-logo:after {     box-sizing: border-box; }  .jp-card-logo.jp-card-amex {   text-transform: uppercase;   font-size: 4px;   font-weight: bold;   color: white;   background-image: repeating-radial-gradient(circle at center, #FFF 1px, #999 2px);   background-image: repeating-radial-gradient(circle at center, #FFF 1px, #999 2px);   border: 1px solid #EEE; }   .jp-card-logo.jp-card-amex:before, .jp-card-logo.jp-card-amex:after {     width: 28px;     display: block;     position: absolute;     left: 16px; }   .jp-card-logo.jp-card-amex:before {     height: 28px;     content: "american";     top: 3px;     text-align: left;     padding-left: 2px;     padding-top: 11px;     background: #267AC3; }   .jp-card-logo.jp-card-amex:after {     content: "express";     bottom: 11px;     text-align: right;     padding-right: 2px; }  .jp-card.jp-card-amex.jp-card-flipped {   -webkit-transform: none;   -moz-transform: none;   -ms-transform: none;   -o-transform: none;   transform: none; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front:before, .jp-card.jp-card-amex.jp-card-identified .jp-card-back:before {   background-color: #108168; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front .jp-card-logo.jp-card-amex {   opacity: 1; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front .jp-card-cvc {   visibility: visible; }  .jp-card.jp-card-amex.jp-card-identified .jp-card-front:after {   opacity: 1; }  .jp-card-logo.jp-card-discover {   background: #FF6600;   color: #111;   text-transform: uppercase;   font-style: normal;   font-weight: bold;   font-size: 10px;   text-align: center;   overflow: hidden;   z-index: 1;   padding-top: 9px;   letter-spacing: .03em;   border: 1px solid #EEE; }   .jp-card-logo.jp-card-discover:before, .jp-card-logo.jp-card-discover:after {     content: " ";     display: block;     position: absolute; }   .jp-card-logo.jp-card-discover:before {     background: white;     width: 200px;     height: 200px;     border-radius: 200px;     bottom: -5%;     right: -80%;     z-index: -1; }   .jp-card-logo.jp-card-discover:after {     width: 8px;     height: 8px;     border-radius: 4px;     top: 10px;     left: 27px;     background-color: #FF6600;     background-image: -webkit-radial-gradient(#FF6600, #fff);     background-image: radial-gradient(  #FF6600, #fff);     content: "network";     font-size: 4px;     line-height: 24px;     text-indent: -7px; }  .jp-card .jp-card-front .jp-card-logo.jp-card-discover {   right: 12%;   top: 18%; }  .jp-card.jp-card-discover.jp-card-identified .jp-card-front:before, .jp-card.jp-card-discover.jp-card-identified .jp-card-back:before {   background-color: #86B8CF; }  .jp-card.jp-card-discover.jp-card-identified .jp-card-logo.jp-card-discover {   opacity: 1; }  .jp-card.jp-card-discover.jp-card-identified .jp-card-front:after {   -webkit-transition: 400ms;   -moz-transition: 400ms;   transition: 400ms;   content: " ";   display: block;   background-color: #FF6600;   background-image: -webkit-linear-gradient(#FF6600, #ffa366, #FF6600);   background-image: linear-gradient(#FF6600, #ffa366, #FF6600);   height: 50px;   width: 50px;   border-radius: 25px;   position: absolute;   left: 100%;   top: 15%;   margin-left: -25px;   box-shadow: inset 1px 1px 3px 1px rgba(0, 0, 0, 0.5); }  .jp-card-logo.jp-card-visa {   background: white;   text-transform: uppercase;   color: #1A1876;   text-align: center;   font-weight: bold;   font-size: 15px;   line-height: 18px; }   .jp-card-logo.jp-card-visa:before, .jp-card-logo.jp-card-visa:after {     content: " ";     display: block;     width: 100%;     height: 25%; }   .jp-card-logo.jp-card-visa:before {     background: #1A1876; }   .jp-card-logo.jp-card-visa:after {     background: #E79800; }  .jp-card.jp-card-visa.jp-card-identified .jp-card-front:before, .jp-card.jp-card-visa.jp-card-identified .jp-card-back:before {   background-color: #191278; }  .jp-card.jp-card-visa.jp-card-identified .jp-card-logo.jp-card-visa {   opacity: 1; }  .jp-card-logo.jp-card-mastercard {   color: white;   font-weight: bold;   text-align: center;   font-size: 9px;   line-height: 36px;   z-index: 1;   text-shadow: 1px 1px rgba(0, 0, 0, 0.6); }   .jp-card-logo.jp-card-mastercard:before, .jp-card-logo.jp-card-mastercard:after {     content: " ";     display: block;     width: 36px;     top: 0;     position: absolute;     height: 36px;     border-radius: 18px; }   .jp-card-logo.jp-card-mastercard:before {     left: 0;     background: #FF0000;     z-index: -1; }   .jp-card-logo.jp-card-mastercard:after {     right: 0;     background: #FFAB00;     z-index: -2; }  .jp-card.jp-card-mastercard.jp-card-identified .jp-card-front .jp-card-logo.jp-card-mastercard, .jp-card.jp-card-mastercard.jp-card-identified .jp-card-back .jp-card-logo.jp-card-mastercard {   box-shadow: none; }  .jp-card.jp-card-mastercard.jp-card-identified .jp-card-front:before, .jp-card.jp-card-mastercard.jp-card-identified .jp-card-back:before {   background-color: #0061A8; }  .jp-card.jp-card-mastercard.jp-card-identified .jp-card-logo.jp-card-mastercard {   opacity: 1; }  .jp-card-logo.jp-card-maestro {   color: white;   font-weight: bold;   text-align: center;   font-size: 14px;   line-height: 36px;   z-index: 1;   text-shadow: 1px 1px rgba(0, 0, 0, 0.6); }   .jp-card-logo.jp-card-maestro:before, .jp-card-logo.jp-card-maestro:after {     content: " ";     display: block;     width: 36px;     top: 0;     position: absolute;     height: 36px;     border-radius: 18px; }   .jp-card-logo.jp-card-maestro:before {     left: 0;     background: #0064CB;     z-index: -1; }   .jp-card-logo.jp-card-maestro:after {     right: 0;     background: #CC0000;     z-index: -2; }  .jp-card.jp-card-maestro.jp-card-identified .jp-card-front .jp-card-logo.jp-card-maestro, .jp-card.jp-card-maestro.jp-card-identified .jp-card-back .jp-card-logo.jp-card-maestro {   box-shadow: none; }  .jp-card.jp-card-maestro.jp-card-identified .jp-card-front:before, .jp-card.jp-card-maestro.jp-card-identified .jp-card-back:before {   background-color: #0B2C5F; }  .jp-card.jp-card-maestro.jp-card-identified .jp-card-logo.jp-card-maestro {   opacity: 1; }  .jp-card-logo.jp-card-dankort {   width: 60px;   height: 36px;   padding: 3px;   border-radius: 8px;   border: #000000 1px solid;   background-color: #FFFFFF; }   .jp-card-logo.jp-card-dankort .dk {     position: relative;     width: 100%;     height: 100%;     overflow: hidden; }     .jp-card-logo.jp-card-dankort .dk:before {       background-color: #ED1C24;       content: \'\';       position: absolute;       width: 100%;       height: 100%;       display: block;       border-radius: 6px; }     .jp-card-logo.jp-card-dankort .dk:after {       content: \'\';       position: absolute;       top: 50%;       margin-top: -7.7px;       right: 0;       width: 0;       height: 0;       border-style: solid;       border-width: 7px 7px 10px 0;       border-color: transparent #ED1C24 transparent transparent;       z-index: 1; }   .jp-card-logo.jp-card-dankort .d, .jp-card-logo.jp-card-dankort .k {     position: absolute;     top: 50%;     width: 50%;     display: block;     height: 15.4px;     margin-top: -7.7px;     background: white; }   .jp-card-logo.jp-card-dankort .d {     left: 0;     border-radius: 0 8px 10px 0; }     .jp-card-logo.jp-card-dankort .d:before {       content: \'\';       position: absolute;       top: 50%;       left: 50%;       display: block;       background: #ED1C24;       border-radius: 2px 4px 6px 0px;       height: 5px;       width: 7px;       margin: -3px 0 0 -4px; }   .jp-card-logo.jp-card-dankort .k {     right: 0; }     .jp-card-logo.jp-card-dankort .k:before, .jp-card-logo.jp-card-dankort .k:after {       content: \'\';       position: absolute;       right: 50%;       width: 0;       height: 0;       border-style: solid;       margin-right: -1px; }     .jp-card-logo.jp-card-dankort .k:before {       top: 0;       border-width: 8px 5px 0 0;       border-color: #ED1C24 transparent transparent transparent; }     .jp-card-logo.jp-card-dankort .k:after {       bottom: 0;       border-width: 0 5px 8px 0;       border-color: transparent transparent #ED1C24 transparent; }  .jp-card.jp-card-dankort.jp-card-identified .jp-card-front:before, .jp-card.jp-card-dankort.jp-card-identified .jp-card-back:before {   background-color: #0055C7; }  .jp-card.jp-card-dankort.jp-card-identified .jp-card-logo.jp-card-dankort {   opacity: 1; }  .jp-card-logo.jp-card-elo {   height: 50px;   width: 50px;   border-radius: 100%;   background: black;   color: white;   text-align: center;   text-transform: lowercase;   font-size: 21px;   font-style: normal;   letter-spacing: 1px;   font-weight: bold;   padding-top: 13px; }   .jp-card-logo.jp-card-elo .e, .jp-card-logo.jp-card-elo .l, .jp-card-logo.jp-card-elo .o {     display: inline-block;     position: relative; }   .jp-card-logo.jp-card-elo .e {     -webkit-transform: rotate(-15deg);     -moz-transform: rotate(-15deg);     -ms-transform: rotate(-15deg);     -o-transform: rotate(-15deg);     transform: rotate(-15deg); }   .jp-card-logo.jp-card-elo .o {     position: relative;     display: inline-block;     width: 12px;     height: 12px;     right: 0;     top: 7px;     border-radius: 100%;     background-image: -webkit-linear-gradient( yellow 50%, red 50%);     background-image: linear-gradient( yellow 50%, red 50%);     -webkit-transform: rotate(40deg);     -moz-transform: rotate(40deg);     -ms-transform: rotate(40deg);     -o-transform: rotate(40deg);     transform: rotate(40deg);     text-indent: -9999px; }     .jp-card-logo.jp-card-elo .o:before {       content: "";       position: absolute;       width: 49%;       height: 49%;       background: black;       border-radius: 100%;       text-indent: -99999px;       top: 25%;       left: 25%; }  .jp-card.jp-card-elo.jp-card-identified .jp-card-front:before, .jp-card.jp-card-elo.jp-card-identified .jp-card-back:before {   background-color: #6F6969; }  .jp-card.jp-card-elo.jp-card-identified .jp-card-logo.jp-card-elo {   opacity: 1; }  .jp-card-container {   -webkit-perspective: 1000px;   -moz-perspective: 1000px;   perspective: 1000px;   width: 350px;   max-width: 100%;   height: 200px;   margin: auto;   z-index: 1;   position: relative; }  .jp-card {   font-family: "Helvetica Neue";   line-height: 1;   position: relative;   width: 100%;   height: 100%;   min-width: 315px;   border-radius: 10px;   -webkit-transform-style: preserve-3d;   -moz-transform-style: preserve-3d;   -ms-transform-style: preserve-3d;   -o-transform-style: preserve-3d;   transform-style: preserve-3d;   -webkit-transition: all 400ms linear;   -moz-transition: all 400ms linear;   transition: all 400ms linear; }   .jp-card > *, .jp-card > *:before, .jp-card > *:after {     -moz-box-sizing: border-box;     -webkit-box-sizing: border-box;     box-sizing: border-box;     font-family: inherit; }   .jp-card.jp-card-flipped {     -webkit-transform: rotateY(180deg);     -moz-transform: rotateY(180deg);     -ms-transform: rotateY(180deg);     -o-transform: rotateY(180deg);     transform: rotateY(180deg); }   .jp-card .jp-card-front, .jp-card .jp-card-back {     -webkit-backface-visibility: hidden;     backface-visibility: hidden;     -webkit-transform-style: preserve-3d;     -moz-transform-style: preserve-3d;     -ms-transform-style: preserve-3d;     -o-transform-style: preserve-3d;     transform-style: preserve-3d;     -webkit-transition: all 400ms linear;     -moz-transition: all 400ms linear;     transition: all 400ms linear;     width: 100%;     height: 100%;     position: absolute;     top: 0;     left: 0;     overflow: hidden;     border-radius: 10px;     background: #DDD; }     .jp-card .jp-card-front:before, .jp-card .jp-card-back:before {       content: " ";       display: block;       position: absolute;       width: 100%;       height: 100%;       top: 0;       left: 0;       opacity: 0;       border-radius: 10px;       -webkit-transition: all 400ms ease;       -moz-transition: all 400ms ease;       transition: all 400ms ease; }     .jp-card .jp-card-front:after, .jp-card .jp-card-back:after {       content: " ";       display: block; }     .jp-card .jp-card-front .jp-card-display, .jp-card .jp-card-back .jp-card-display {       color: white;       font-weight: normal;       opacity: 0.5;       -webkit-transition: opacity 400ms linear;       -moz-transition: opacity 400ms linear;       transition: opacity 400ms linear; }       .jp-card .jp-card-front .jp-card-display.jp-card-focused, .jp-card .jp-card-back .jp-card-display.jp-card-focused {         opacity: 1;         font-weight: 700; }     .jp-card .jp-card-front .jp-card-cvc, .jp-card .jp-card-back .jp-card-cvc {       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       font-size: 14px; }     .jp-card .jp-card-front .jp-card-shiny, .jp-card .jp-card-back .jp-card-shiny {       width: 50px;       height: 35px;       border-radius: 5px;       background: #CCC;       position: relative; }       .jp-card .jp-card-front .jp-card-shiny:before, .jp-card .jp-card-back .jp-card-shiny:before {         content: " ";         display: block;         width: 70%;         height: 60%;         border-top-right-radius: 5px;         border-bottom-right-radius: 5px;         background: #d9d9d9;         position: absolute;         top: 20%; }   .jp-card .jp-card-front .jp-card-logo {     position: absolute;     opacity: 0;     right: 5%;     top: 8%;     -webkit-transition: 400ms;     -moz-transition: 400ms;     transition: 400ms; }   .jp-card .jp-card-front .jp-card-lower {     width: 80%;     position: absolute;     left: 10%;     bottom: 30px; }     @media only screen and (max-width: 480px) {       .jp-card .jp-card-front .jp-card-lower {         width: 90%;         left: 5%; } }     .jp-card .jp-card-front .jp-card-lower .jp-card-cvc {       visibility: hidden;       float: right;       position: relative;       bottom: 5px; }     .jp-card .jp-card-front .jp-card-lower .jp-card-number {       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       font-size: 24px;       clear: both;       margin-bottom: 30px; }     .jp-card .jp-card-front .jp-card-lower .jp-card-expiry {       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       letter-spacing: 0em;       position: relative;       float: right;       width: 25%; }       .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:before, .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:after {         font-family: "Helvetica Neue";         font-weight: bold;         font-size: 7px;         white-space: pre;         display: block;         opacity: .5; }       .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:before {         content: attr(data-before);         margin-bottom: 2px;         font-size: 7px;         text-transform: uppercase; }       .jp-card .jp-card-front .jp-card-lower .jp-card-expiry:after {         position: absolute;         content: attr(data-after);         text-align: right;         right: 100%;         margin-right: 5px;         margin-top: 2px;         bottom: 0; }     .jp-card .jp-card-front .jp-card-lower .jp-card-name {       text-transform: uppercase;       font-family: "Bitstream Vera Sans Mono", Consolas, Courier, monospace;       font-size: 20px;       max-height: 45px;       position: absolute;       bottom: 0;       width: 190px;       display: -webkit-box;       -webkit-line-clamp: 2;       -webkit-box-orient: horizontal;       overflow: hidden;       text-overflow: ellipsis; }   .jp-card .jp-card-back {     -webkit-transform: rotateY(180deg);     -moz-transform: rotateY(180deg);     -ms-transform: rotateY(180deg);     -o-transform: rotateY(180deg);     transform: rotateY(180deg); }     .jp-card .jp-card-back .jp-card-bar {       background-color: #444;       background-image: -webkit-linear-gradient(#444, #333);       background-image: linear-gradient(#444, #333);       width: 100%;       height: 20%;       position: absolute;       top: 10%; }     .jp-card .jp-card-back:after {       content: " ";       display: block;       background-color: #FFF;       background-image: -webkit-linear-gradient(#FFF, #FFF);       background-image: linear-gradient(#FFF, #FFF);       width: 80%;       height: 16%;       position: absolute;       top: 40%;       left: 2%; }     .jp-card .jp-card-back .jp-card-cvc {       position: absolute;       top: 40%;       left: 85%;       -webkit-transition-delay: 600ms;       -moz-transition-delay: 600ms;       transition-delay: 600ms; }     .jp-card .jp-card-back .jp-card-shiny {       position: absolute;       top: 66%;       left: 2%; }       .jp-card .jp-card-back .jp-card-shiny:after {         content: "This card has been issued by Jesse Pollak and is licensed for anyone to use anywhere for free.\AIt comes with no warranty.\A For support issues, please visit: github.com/jessepollak/card.";         position: absolute;         left: 120%;         top: 5%;         color: white;         font-size: 7px;         width: 230px;         opacity: .5; }   .jp-card.jp-card-identified {     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); }     .jp-card.jp-card-identified .jp-card-front, .jp-card.jp-card-identified .jp-card-back {       background-color: #000;       background-color: rgba(0, 0, 0, 0.5); }       .jp-card.jp-card-identified .jp-card-front:before, .jp-card.jp-card-identified .jp-card-back:before {         -webkit-transition: all 400ms ease;         -moz-transition: all 400ms ease;         transition: all 400ms ease;         background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), -webkit-linear-gradient(-245deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);         background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 90% 20%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-radial-gradient(circle at 15% 80%, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), linear-gradient(-25deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);         opacity: 1; }       .jp-card.jp-card-identified .jp-card-front .jp-card-logo, .jp-card.jp-card-identified .jp-card-back .jp-card-logo {         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3); }     .jp-card.jp-card-identified.no-radial-gradient .jp-card-front:before, .jp-card.jp-card-identified.no-radial-gradient .jp-card-back:before {       background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), -webkit-linear-gradient(-245deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%);       background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.03) 4px), repeating-linear-gradient(90deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), repeating-linear-gradient(210deg, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.04) 3px, rgba(255, 255, 255, 0.05) 4px), linear-gradient(-25deg, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.2) 70%, rgba(255, 255, 255, 0) 90%); } ');;
+},{"sassify":6}]},{},[8])(8)
+});
