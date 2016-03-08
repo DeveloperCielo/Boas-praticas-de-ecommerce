@@ -5,7 +5,7 @@
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title>Boas Práticas eCommerce</title>
+    <title>API Documentation</title>
 
     <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
@@ -13,40 +13,8 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
-    <script src="javascripts/all.js" type="text/javascript"></script>
+    <script src="javascripts/all_nosearch.js" type="text/javascript"></script>
 
-    <script>
-    $(function() {
-        setupLanguages(["php"]);
-
-        var _wr = function(type) {
-            var orig = history[type];
-            return function() {
-                var rv = orig.apply(this, arguments);
-                var e = new Event(type);
-
-                e.arguments = arguments;
-                window.dispatchEvent(e);
-                return rv;
-            };
-        };
-
-        history.pushState = _wr('pushState'), history.replaceState = _wr('replaceState');
-
-        window.onhashchange = function() {
-            ga('send', 'event', 'navigation','click', window.location.href);
-        };
-
-        window.addEventListener('replaceState', function(e) {
-            ga('send', 'event', 'navigation','scroll', window.location.href);
-        });
-
-        window.addEventListener('languagechange', function(e) {
-            ga('send', 'event', 'language','change', e.detail);
-        });
-    });
-
-    </script>
     <script async src='//www.google-analytics.com/analytics.js'></script>
     <script>
     window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -68,13 +36,6 @@
     </a>
     <div class="tocify-wrapper">
         <img src="images/logo.png" />
-        <div class="lang-selector">
-            <a href="#" data-language-name="php">PHP</a>
-        </div>
-        <div class="search">
-            <input type="text" class="search" id="input-search" placeholder="Search">
-        </div>
-        <ul class="search-results"></ul>
         <div id="toc">
         </div>
         <div class="links-footer">
@@ -86,8 +47,7 @@
         </div>
     </div>
     <div class="page-wrapper">
-        <div class="dark-box"></div>
-        <div class="content">
+            <div class="content no-dark-box">
                 <h1 id="boas-práticas-ecommerce">Boas Práticas eCommerce</h1>
 
 <p>Seja por curiosidade, seja por necessidade, você já deve ter se perguntado sobre como é definido o número de um cartão de crédito. Algumas pessoas chegam a achar que são números aleatórios, ou sequênciais, atribuídos pelas bandeiras ou pelos bancos emissores, mas a realidade é que o número do cartão segue um padrão especificado e que é possível saber qual é a bandeira, tipo do cartão e a conta do portador, apenas observando o número do cartão; em alguns casos, de fato, é possível saber até o país de origem do cartão, apenas observando seu número.</p>
@@ -98,15 +58,58 @@
 
 <h2 id="números-de-cartões">Números de cartões</h2>
 
-<p><img alt="Cartão Visa" src="images/cartao.png" /></p>
+<p><img alt="Cartão Visa" src="//developercielo.github.io/Cartoes-e-validacao/images/cartao.png" /></p>
 
 <p>Basicamente, o número do cartão é composto por três partes:</p>
 
 <ol>
 <li><strong>Bin ou Inn</strong> - Bank identification number, ou Issuer identification number, é o número que identifica o banco emissor das bandeiras Visa, Mastercard, Amex, entre outras, por meio dos primeiros dígitos do cartão. No caso do cartão de exemplo acima, o Bin é 4, que é o identificador da Visa.</li>
-<li>Conta do cliente - Após o bin, os próximos dígitos identificam o número da conta do portador no banco emissor. Logo após o Bin, os próximos 14 dúgitos são o identificador da conta do cliente: <strong>012 0010 3714 111</strong>.</li>
-<li>Dígito de verificação - Esse último dígito é utilizado para verificar se o número do cartão de crédito é válido. Para se chegar no dígito verificador é utilizado um algorítimo chamado Luhn. No caso do cartão de exemplo acima, o dígito verificador é <strong>2</strong>.</li>
+<li><strong>Conta do cliente</strong> - Após o bin, os próximos dígitos identificam o número da conta do portador no banco emissor. Logo após o Bin, os próximos 14 dúgitos são o identificador da conta do cliente: <strong>012 0010 3714 111</strong>.</li>
+<li><strong>Dígito de verificação</strong> - Esse último dígito é utilizado para verificar se o número do cartão de crédito é válido. Para se chegar no dígito verificador é utilizado um algorítimo chamado Luhn. No caso do cartão de exemplo acima, o dígito verificador é <strong>2</strong>.</li>
 </ol>
+
+<h2 id="informações-de-cartões">Informações de cartões</h2>
+
+<p>Após validar que o número do cartão é válido através do dígito verificador obtido através do algoritmo Luhn, podemos verificar se o número do cartão está correto segundo a bandeira escolhida. A Cielo não recomenda que se faça uma validação de bandeiras através do BIN - primeiros dígitos do cartão; essa recomendação é importante porque pode haver colisão de mesmo número de BINs para bandeiras diferentes. Algumas bandeiras possuem 13, 15 ou 16 dígitos e o CVV possui 3 ou 4 dígitos. A tabela abaixo mostra a quantidade de dígitos de cada bandeira e seus respectivos CVV. Utilize essa informação em conjunto com o algoritmo Luhn para uma validação completa do número do cartão do cliente.</p>
+
+<table><thead>
+<tr>
+<th>Bandeira</th>
+<th>Número de dígitos</th>
+<th>Dígitos do CVV</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Visa</td>
+<td>13 ou 16 dígitos</td>
+<td>3 dígitos</td>
+</tr>
+<tr>
+<td>Mastercard</td>
+<td>16 dígitos</td>
+<td>3 dígitos</td>
+</tr>
+<tr>
+<td>Amex</td>
+<td>15 dígitos</td>
+<td>4 dígitos</td>
+</tr>
+<tr>
+<td>Diners Club International</td>
+<td>14 dígitos</td>
+<td>3 dígitos</td>
+</tr>
+<tr>
+<td>JCB</td>
+<td>16 dígitos</td>
+<td>3 dígitos</td>
+</tr>
+<tr>
+<td>ELO</td>
+<td>16 dígitos</td>
+<td>3 dígitos</td>
+</tr>
+</tbody></table>
 
 <h1 id="validação-dos-números-do-cartão">Validação dos números do cartão</h1>
 
@@ -406,86 +409,6 @@
 </tr>
 </tbody></table>
 
-<h2 id="validação-da-bandeira">Validação da bandeira</h2>
-
-<p>Após validar que o número do cartão é válido através do dígito verificador obtido através do algoritmo Luhn, podemos verificar se a bandeira está correta apenas verificando o BIN. Por exemplo, no primeiro exemplo de cálculo utilizamos o cartão 4012001037141112; como o cartão começa com o dígito 4, sabemos que esse cartão é um cartão Visa válido. O mesmo para o segundo exemplo, o segundo cartão que validamos acima foi o cartão 5453010000066167; como ele inicia em 54, sabemos que é um cartão Mastercard válido.</p>
-
-<aside class="warning"><strong>Atenção!</strong><br /><br />A tabela abaixo lista alguns BINs de algumas bandeiras. <strong>Não existe uma lista oficial</strong> dos BINs das bandeiras, portanto novos BINs podem ser incorporados pelas bandeiras, fazendo com que essa listagem se torne desatualizada. Tentamos compilar essa lista utilizando os BINs atualmente conhecidos, mas <strong>essa lista pode se tornar desatualizada a qualquer momento e sem aviso prévio</strong>.</aside>
-
-<table><thead>
-<tr>
-<th>Bandeira</th>
-<th>Bin</th>
-<th>Número de dígitos</th>
-<th>Dígitos do CVV</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Visa</td>
-<td>4</td>
-<td>13 ou 16 dígitos</td>
-<td>3 dígitos</td>
-</tr>
-<tr>
-<td>Mastercard</td>
-<td>51 à 55</td>
-<td>16 dígitos</td>
-<td>3 dígitos</td>
-</tr>
-<tr>
-<td>Amex</td>
-<td><ul><li>34</li><li>37</li></ul></td>
-<td>15 dígitos</td>
-<td>4 dígitos</td>
-</tr>
-<tr>
-<td>Diners Club International</td>
-<td><ul><li>300 à 305</li><li>309</li><li>36</li><li>38 à 39</li></ul></td>
-<td>14 dígitos</td>
-<td>3 dígitos</td>
-</tr>
-<tr>
-<td>JCB</td>
-<td>3528 à 3589</td>
-<td>16 dígitos</td>
-<td>3 dígitos</td>
-</tr>
-<tr>
-<td>ELO</td>
-<td><ul><li>401178</li><li>401179</li><li>431274</li><li>438935</li><li>451416</li><li>457393</li><li>457631</li><li>457632</li><li>504175</li><li>506699 à 506778</li><li>509000 à 509999</li><li>627780</li><li>636297</li><li>636368</li><li>650031 à 650033</li><li>650035 à 650051</li><li>650405 à 650439</li><li>650485 à 650538</li><li>650541 à 650598</li><li>650700 à 650718</li><li>650720 à 650727</li><li>650901 à 650920</li><li>651652 à 651679</li><li>655000 à 655019</li><li>655021 à 655058</li></ul></td>
-<td>16 dígitos</td>
-<td>3 dígitos</td>
-</tr>
-</tbody></table>
-
-<h1 id="evitando-erros-na-integração">Evitando erros na integração</h1>
-
-<p>Um erro muito comum que ocorre nas integrações, é o erro 14 - cartão inválido. Esse tipo de erro é causado, normalmente, por erro de digitação do cliente, mas pode ser facilmente evitado apenas seguindo duas recomendações:</p>
-
-<ol>
-<li>Sempre faça a verificação do número do cartão no frontend, de forma visual para o cliente.</li>
-<li>Sempre faça a validação no backend antes de fazer a integração com a Cielo.</li>
-</ol>
-
-<p>Validando o cartão utilizando o algoritmo Luhn para validar o número do cartão, como descrito anteriormente, é a forma mais eficiente para evitar o erro 14 e melhorar a experiência de compra do cliente da loja.</p>
-
-<h2 id="verificação-no-frontend">Verificação no frontend</h2>
-
-<p>Para evitar que o cliente digite o número do cartão de forma errada e a loja receba um erro durante a integração, a recomendação é uma verificação dupla do número do cartão. A primeira verificação deve ocorrer no browser do cliente e a loja pode utilizar alguns plugins para isso. O exemplo abaixo utiliza o seguinte plugin: <a href="https://github.com/jessepollak/card">jessepollak/card</a></p>
-
-<div class="demo-container">
-    <div class="card-wrapper"></div>
-
-    <div class="form-container active">
-        <form action="">
-            <input placeholder="Card number" type="text" name="number">
-            <input placeholder="Full name" type="text" name="name">
-            <input placeholder="MM/YY" type="text" name="expiry">
-            <input placeholder="CVC" type="text" name="cvc">
-        </form>
-    </div>
-</div>
-
 <h2 id="validação-no-backend">Validação no backend</h2>
 
 <p>Porém, mesmo tendo o plugin verificador no frontend, é fundamental, até por considerações de segurança, que uma validação de fato ocorra no backend. Para isso, a função abaixo irá ajudá-lo a fazer essa validação:</p>
@@ -515,14 +438,8 @@
 <pre><code class="highlight php">if (cardIsValid($customerCardNumber)) {
   // o cartão é válido e podemos dar andamento na integração
 }
-``
 </code></pre>
 
-            </div>
-            <div class="dark-box">
-                <div class="lang-selector">
-                    <a href="#" data-language-name="php">PHP</a>
-                </div>
             </div>
         </div>
         <script>
