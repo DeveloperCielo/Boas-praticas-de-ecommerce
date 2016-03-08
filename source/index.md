@@ -1,12 +1,3 @@
----
-title: Boas Práticas eCommerce
-
-language_tabs:
-  - php: PHP
-
-search: true
----
-
 # Boas Práticas eCommerce
 
 Seja por curiosidade, seja por necessidade, você já deve ter se perguntado sobre como é definido o número de um cartão de crédito. Algumas pessoas chegam a achar que são números aleatórios, ou sequênciais, atribuídos pelas bandeiras ou pelos bancos emissores, mas a realidade é que o número do cartão segue um padrão especificado e que é possível saber qual é a bandeira, tipo do cartão e a conta do portador, apenas observando o número do cartão; em alguns casos, de fato, é possível saber até o país de origem do cartão, apenas observando seu número.
@@ -17,13 +8,26 @@ Por isso, a Cielo recomenda que, no momento que o portador digitar o número do 
 
 ## Números de cartões
 
-![Cartão Visa](images/cartao.png)
+![Cartão Visa](//developercielo.github.io/Cartoes-e-validacao/images/cartao.png)
 
 Basicamente, o número do cartão é composto por três partes:
 
 1. **Bin ou Inn** - Bank identification number, ou Issuer identification number, é o número que identifica o banco emissor das bandeiras Visa, Mastercard, Amex, entre outras, por meio dos primeiros dígitos do cartão. No caso do cartão de exemplo acima, o Bin é 4, que é o identificador da Visa.
-2. Conta do cliente - Após o bin, os próximos dígitos identificam o número da conta do portador no banco emissor. Logo após o Bin, os próximos 14 dúgitos são o identificador da conta do cliente: **012 0010 3714 111**.
-3. Dígito de verificação - Esse último dígito é utilizado para verificar se o número do cartão de crédito é válido. Para se chegar no dígito verificador é utilizado um algorítimo chamado Luhn. No caso do cartão de exemplo acima, o dígito verificador é **2**.
+2. **Conta do cliente** - Após o bin, os próximos dígitos identificam o número da conta do portador no banco emissor. Logo após o Bin, os próximos 14 dúgitos são o identificador da conta do cliente: **012 0010 3714 111**.
+3. **Dígito de verificação** - Esse último dígito é utilizado para verificar se o número do cartão de crédito é válido. Para se chegar no dígito verificador é utilizado um algorítimo chamado Luhn. No caso do cartão de exemplo acima, o dígito verificador é **2**.
+
+## Informações de cartões
+
+Após validar que o número do cartão é válido através do dígito verificador obtido através do algoritmo Luhn, podemos verificar se o número do cartão está correto segundo a bandeira escolhida. A Cielo não recomenda que se faça uma validação de bandeiras através do BIN - primeiros dígitos do cartão; essa recomendação é importante porque pode haver colisão de mesmo número de BINs para bandeiras diferentes. Algumas bandeiras possuem 13, 15 ou 16 dígitos e o CVV possui 3 ou 4 dígitos. A tabela abaixo mostra a quantidade de dígitos de cada bandeira e seus respectivos CVV. Utilize essa informação em conjunto com o algoritmo Luhn para uma validação completa do número do cartão do cliente.
+
+|Bandeira|Número de dígitos|Dígitos do CVV|
+|--------|---|-----------------|--------------|
+|Visa|13 ou 16 dígitos|3 dígitos|
+|Mastercard|16 dígitos|3 dígitos|
+|Amex|15 dígitos|4 dígitos|
+|Diners Club International|14 dígitos|3 dígitos|
+|JCB|16 dígitos|3 dígitos|
+|ELO|16 dígitos|3 dígitos|
 
 # Validação dos números do cartão
 
@@ -71,47 +75,6 @@ Um outro exemplo do cálculo, dessa vez com um cartão Martercard:
 |Passo 4||||||||||||||||23%10|3|
 |Passo 5||||||||||||||||10-3|**7**|
 
-## Validação da bandeira
-
-Após validar que o número do cartão é válido através do dígito verificador obtido através do algoritmo Luhn, podemos verificar se a bandeira está correta apenas verificando o BIN. Por exemplo, no primeiro exemplo de cálculo utilizamos o cartão 4012001037141112; como o cartão começa com o dígito 4, sabemos que esse cartão é um cartão Visa válido. O mesmo para o segundo exemplo, o segundo cartão que validamos acima foi o cartão 5453010000066167; como ele inicia em 54, sabemos que é um cartão Mastercard válido.
-
-<aside class="warning"><strong>Atenção!</strong><br /><br />A tabela abaixo lista alguns BINs de algumas bandeiras. <strong>Não existe uma lista oficial</strong> dos BINs das bandeiras, portanto novos BINs podem ser incorporados pelas bandeiras, fazendo com que essa listagem se torne desatualizada. Tentamos compilar essa lista utilizando os BINs atualmente conhecidos, mas <strong>essa lista pode se tornar desatualizada a qualquer momento e sem aviso prévio</strong>.</aside>
-
-|Bandeira|Bin|Número de dígitos|Dígitos do CVV|
-|--------|---|-----------------|--------------|
-|Visa|4|13 ou 16 dígitos|3 dígitos|
-|Mastercard|51 à 55|16 dígitos|3 dígitos|
-|Amex|<ul><li>34</li><li>37</li></ul>|15 dígitos|4 dígitos|
-|Diners Club International|<ul><li>300 à 305</li><li>309</li><li>36</li><li>38 à 39</li></ul>|14 dígitos|3 dígitos|
-|JCB|3528 à 3589|16 dígitos|3 dígitos|
-|ELO|<ul><li>401178</li><li>401179</li><li>431274</li><li>438935</li><li>451416</li><li>457393</li><li>457631</li><li>457632</li><li>504175</li><li>506699 à 506778</li><li>509000 à 509999</li><li>627780</li><li>636297</li><li>636368</li><li>650031 à 650033</li><li>650035 à 650051</li><li>650405 à 650439</li><li>650485 à 650538</li><li>650541 à 650598</li><li>650700 à 650718</li><li>650720 à 650727</li><li>650901 à 650920</li><li>651652 à 651679</li><li>655000 à 655019</li><li>655021 à 655058</li></ul>|16 dígitos|3 dígitos|
-
-# Evitando erros na integração
-
-Um erro muito comum que ocorre nas integrações, é o erro 14 - cartão inválido. Esse tipo de erro é causado, normalmente, por erro de digitação do cliente, mas pode ser facilmente evitado apenas seguindo duas recomendações:
-
-1. Sempre faça a verificação do número do cartão no frontend, de forma visual para o cliente.
-2. Sempre faça a validação no backend antes de fazer a integração com a Cielo.
-
-Validando o cartão utilizando o algoritmo Luhn para validar o número do cartão, como descrito anteriormente, é a forma mais eficiente para evitar o erro 14 e melhorar a experiência de compra do cliente da loja.
-
-## Verificação no frontend
-
-Para evitar que o cliente digite o número do cartão de forma errada e a loja receba um erro durante a integração, a recomendação é uma verificação dupla do número do cartão. A primeira verificação deve ocorrer no browser do cliente e a loja pode utilizar alguns plugins para isso. O exemplo abaixo utiliza o seguinte plugin: [jessepollak/card](https://github.com/jessepollak/card)
-
-<div class="demo-container">
-    <div class="card-wrapper"></div>
-
-    <div class="form-container active">
-        <form action="">
-            <input placeholder="Card number" type="text" name="number">
-            <input placeholder="Full name" type="text" name="name">
-            <input placeholder="MM/YY" type="text" name="expiry">
-            <input placeholder="CVC" type="text" name="cvc">
-        </form>
-    </div>
-</div>
-
 ## Validação no backend
 
 Porém, mesmo tendo o plugin verificador no frontend, é fundamental, até por considerações de segurança, que uma validação de fato ocorra no backend. Para isso, a função abaixo irá ajudá-lo a fazer essa validação:
@@ -145,4 +108,4 @@ Para utilizá-la, basta testar o número do cartão enviado pelo cliente:
 if (cardIsValid($customerCardNumber)) {
   // o cartão é válido e podemos dar andamento na integração
 }
-``
+```
