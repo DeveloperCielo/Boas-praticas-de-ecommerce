@@ -66,13 +66,13 @@ O terceiro passo é pegar os resultados das multiplicações e somar todos os d�
 |-------|-------|---------|
 |802200206724212|8+0+2+2+0+0+2+0+6+7+2+4+2+1+2|38|
 
-O quarto passo é obter o resto da divisão euclidiana do resultado do terceiro passo por 10: 38 / 10 = 3, com resto 8. O quinto passo é subtrair o resto de 10: 10 - 8 = 2
+O quarto passo é obter o resto da divisão euclidiana do resultado do terceiro passo por 10: 38 / 10 = 3, com resto 8. O quinto passo é subtrair o resto de 10: 10 - 8 = 2.
 
 |Cálculo IV|Quociente|Resto|Cálculo V|Resultado|
 |----------|---------|-----|---------|---------|
 |38/10|3|8|10-8|2|
 
-O número 2 é o dígito de verificação. Para verificar se o número do cartão informado pelo cliente é válido, basta verificar o número do primeiro passo + o dígito de verificação é igual ao número de cartão informado pelo cliente.
+O número 2 é o dígito de verificação; se o resultado da subtração no passo 4 for 10, então o dígito de verificação será 0. Para verificar se o número do cartão informado pelo cliente é válido, basta verificar o número do primeiro passo + o dígito de verificação é igual ao número de cartão informado pelo cliente.
 
 Um outro exemplo do cálculo, dessa vez com um cartão Martercard:
 
@@ -107,7 +107,7 @@ function cardIsValid($cardNumber)
         }
     }
 
-    return substr($cardNumber, -1, 1) == (10-$sum%10);
+    return substr($cardNumber, -1, 1) == (10-$sum%10)%10;
 }
 ```
 
