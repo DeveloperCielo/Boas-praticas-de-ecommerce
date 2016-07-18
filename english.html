@@ -1,0 +1,2150 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <title>Cielo Migration Guide</title>
+
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
+    <link href="https://www.cielo.com.br/wps/contenthandler/!ut/p/digest!3SvhW8ACOLyj_90YHxPhKQ/war/cielo-tema/themes/estatico/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <script src="javascripts/all.js" type="text/javascript"></script>
+
+    <script async src='//www.google-analytics.com/analytics.js'></script>
+    <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+
+    ga('create', 'UA-8516386-7', {'cookieDomain': 'auto', 'alwaysSendReferrer': true});
+    ga('create', 'UA-31855766-1', {'name': 'iMasters', 'cookieDomain': 'auto', 'alwaysSendReferrer': true});
+
+    ga("set", "transport", "beacon");
+    ga('send', 'pageview');
+    </script>
+</head>
+
+<body class="english">
+    <a href="#" id="nav-button">
+        <span>
+            NAV
+            <img src="images/navbar.png" />
+        </span>
+    </a>
+    <div class="tocify-wrapper">
+        <ul class="languages">
+            <li class="english"><a href="english.html" title="English version">English version</a></li>
+            <li class="portuguese"><a href="index.html" title="Versão em português">Versão em português</a></li>
+        </ul>
+        <img src="images/logo.png" />
+        <div class="search">
+            <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+        <div id="toc">
+        </div>
+        <h2 class="toc-footer-title">Materiais complementares</h2>
+        <ul class="toc-footer">
+            <li><a href='/Boas-praticas-de-ecommerce/'>Boas práticas de eCommerce</a></li>
+            <li><a href='/Webservice-1.5/'>Integração com o Webservice 1.5</a></li>
+            <li><a href='/Webservice-3.0/'>Integração com a API 3.0</a></li>
+        </ul>
+        <div class="links-footer">
+            <ul class="link-list">
+                <li class="cielo"><a href="https://www.cielo.com.br/ecommerce">Cielo</a></li>
+                <li class="github"><a href="https://github.com/developercielo">Cielo</a></li>
+                <li class="desenvolvedores"><a href="https://www.cielo.com.br/desenvolvedores">Cielo</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="page-wrapper">
+            <div class="content no-dark-box">
+                <h1 id="cielo-migration-guide">Cielo Migration Guide</h1>
+
+<p>This guide aims to facilitate the migration of the integration between the Webservice API 1.5 and 3.0 solutions. Before reading this guide, it is highly type recommended that you read Integration Manual of the solution to which you want to migrate your current integration. Manuals can be found at:</p>
+
+<ul>
+<li><a href="https://developercielo.github.io/Webservice-1.5">Solução Webservice 1.5</a></li>
+<li><a href="https://developercielo.github.io/Webservice-3.0">Solução API 3.0</a></li>
+</ul>
+
+<h2 id="overview">Overview</h2>
+
+<p>Overall, the first major difference between the two solutions is sending the credentials of the business establishment. In Webservice 1.5, the credentials were sent on the node <code class="prettyprint">data-ec</code> through the elements <code class="prettyprint">numero</code> and <code class="prettyprint">chave</code>; at API 3.0, the credentials are sent using HTTP headers via the header fields <code class="prettyprint">MerchantId</code> and <code class="prettyprint">MerchantKey</code>.</p>
+
+<p>The second major difference between the two solutions is sending the data related to the buyer; as in Webservice 1.5 solution this data is not sent in the integration, the merchant may need to implement this data collection if he wants to send them.</p>
+
+<p>The third major difference between the two solutions is in the AVS; as the 3.0 API does not yet support AVS, there is, at API, a way to send them.</p>
+
+<h3 id="environments-at-3.0">Environments at 3.0</h3>
+
+<p>In addition to these differences, HTTP requests are also made in different environments used HTTP methods specific to each type of request; are they:</p>
+
+<ul>
+<li>Production environment
+
+<ul>
+<li>Transaction request: https://api.cieloeCommerce.cielo.com.br/</li>
+<li>Consultation transaction: https://apiquery.cieloeCommerce.cielo.com.br/</li>
+</ul></li>
+<li>Sandbox environment
+
+<ul>
+<li>Transaction request: https://apisandbox.cieloeCommerce.cielo.com.br</li>
+<li>Consultation transaction: https://apiquerysandbox.cieloeCommerce.cielo.com.br</li>
+</ul></li>
+</ul>
+
+<h3 id="http-methods-at-3.0">HTTP Methods at 3.0</h3>
+
+<h4 id="creating-sales">Creating sales</h4>
+
+<aside class="request"><span class="method post">POST</span> <span class="endpoint">https://api.cieloeCommerce.cielo.com.br/1/sales/</span></aside>
+
+<h4 id="capturing-or-cancelling-a-sale">Capturing or cancelling a sale</h4>
+
+<aside class="request"><span class="method put">PUT</span> <span class="endpoint">https://api.cieloeCommerce.cielo.com.br/1/sales/{PaymentId}/capture</span></aside>
+
+<h4 id="consulting-a-sale">Consulting a sale</h4>
+
+<aside class="request"><span class="method get">GET</span> <span class="endpoint">https://apiquery.cieloeCommerce.cielo.com.br/1/sales/{PaymentId}</span></aside>
+
+<h3 id="comparative-tables">Comparative tables</h3>
+
+<p>The section of the comparative tables shows, field to field, each specific solutions for each use case; the columns&rsquo; GUIDED POR` are used to put the focus on one of the solutions.</p>
+
+<h4 id="guide-per-solution-1.5">Guide per solution 1.5</h4>
+
+<p>If your current integration use the Webservice 1.5 solution and you want to make a comparison with the 3.0 API, simply select the &lsquo;GUIAR POR` column of elements of 1.5;</p>
+
+<p><img alt="Tabela 1.5" src="images/images/tabela-1.5.png" /></p>
+
+<h4 id="guide-per-solution-at-3.0">Guide per solution at 3.0</h4>
+
+<p>If your current integration using the API 3.0 solution and you want to make the comparison with the Webservice 1.5, just select the <code class="prettyprint">GUIAR POR</code> column properties 3.0.</p>
+
+<p><img alt="Tabela 3.0" src="images/images/tabela-3.0.png" /></p>
+
+<h2 id="cielo-support">Cielo Support</h2>
+
+<p>After reading this manual, if still there are questions (technical or not), Cielo offers technical support 24 hours a day, 7 days a week in two languages (Portuguese and English), check the following contacts:</p>
+
+<ul>
+<li>+55 4002-9700 – <em>Capital and Metropolitan Regions</em></li>
+<li>+55 0800-570-1700 – <em>Other Regions</em></li>
+<li>+55 11 2860-1348 – <em>International</em>
+
+<ul>
+<li>Opção 1 – <em>Technical support;</em></li>
+<li>Opção 2 – <em>eCommerce Credential.</em></li>
+</ul></li>
+<li>Email: <a href="mailto:cieloeCommerce@cielo.com.br">cieloeCommerce@cielo.com.br</a></li>
+</ul>
+
+<h2 id="glossary">Glossary</h2>
+
+<p>To facilitate understanding, we list below a small glossary of key terms related to eCommerce, the cards and acquiring market:</p>
+
+<ul>
+<li><strong>Authentication</strong>: process to ensure that the buyer is actually the one who claims to be (legitimate carrier) usually occurs with the bank with use of a digital token or card with security keys.</li>
+<li><strong>Authorization</strong>: process to determine whether or not a purchase can be performed with a card. At this time, they are done various checks with the card and the carrier (ex .: timely payments, locks, etc.) It is also at this time that the card limit is touched by the transaction amount.</li>
+<li><strong>Cancellation</strong>: process to cancel a purchase made with card.</li>
+<li><strong>Capture</strong>: Process confirming an authorization that was held previously. Only after the catch, it is that the cardholder can view it on your statement or invoice.</li>
+<li><strong>Passkey</strong>: is a specific security code each store generated by Cielo, used for authentication and communication in all messages exchanged with Cielo. Also known as a production key and key date.</li>
+<li><strong>Buyer</strong>: it is the one that makes shopping in the virtual store.</li>
+<li><strong>Issuer (or the issuing bank)</strong>: It is the financial institution issuing the credit card, debit card or voucher.</li>
+<li><strong>Commercial establishment or EC</strong>: Entity responsible for the virtual store.</li>
+<li><strong>Gateway payments</strong>: Company responsible for the technical integration and transaction processing.</li>
+<li><strong>Number of accreditation</strong>: is an identifier number that the merchant receives after his accreditation at Cielo.</li>
+<li><strong>Carrier</strong>: you are the person who has possession of the card at the time of sale.</li>
+<li><strong>SecureCode</strong>: MasterCard International program to enable the buyer authentication at the time of the purchase in eCommerce environment.</li>
+<li><strong>TID (Transaction identifier)</strong>: code Consists of 20 characters que uniquely identified the transaction Cielo eCommerce.</li>
+<li><strong>Transaction</strong>: the request for cardholder purchase at Cielo.</li>
+<li><strong>VBV (Verified by Visa)</strong>: Visa International Program Which Enables the buyer&rsquo;s authentication at the time of the purchase in eCommerce environment.</li>
+</ul>
+
+<h1 id="integration-with-credit-card">Integration with credit card</h1>
+
+<h2 id="table-credit-request">Table Credit Request</h2>
+
+<p>In this section you can review, field to field, each specific solutions in the scenario of a sale request for credit. If your current integration use the Webservice 1.5 solution and you want to make a comparison with the 3.0 API, simply select the <code class="prettyprint">GUIAR POR</code> column of elements of 1.5; if your current integration using the API 3.0 solution and you want to make the comparison with the Webservice 1.5, just select the <code class="prettyprint">GUIAR POR</code> column properties of 3.0.</p>
+
+<table><thead>
+<tr>
+<th>Guide per</th>
+<th>solution 3.0</th>
+<th></th>
+<th>Guide per</th>
+<th>solution 1.5</th>
+<th>Comments</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>&ndash;Header.MerchantId</td>
+<td></td>
+<td>1</td>
+<td>dados-ec.numero</td>
+<td>O 1.5 EC receives the body request and the 3.0 gets merchantId the header. These fields do not have the same value</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&ndash;Header.MerchantKey</td>
+<td></td>
+<td>2</td>
+<td>dados-ec.chave</td>
+<td>O 1.5 receives the key request in the body and the 3.0 gets MerchantKey the header. These fields do not have the same value</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&ndash;Header.RequestId</td>
+<td></td>
+<td>30</td>
+<td>&ndash;</td>
+<td>In 1.5 there is no field with the Request ID</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MerchantOrderId</td>
+<td></td>
+<td>11</td>
+<td>dados-pedido.numero</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Customer.Name</td>
+<td></td>
+<td>31</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Customer.Email</td>
+<td></td>
+<td>32</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Customer.Birthdate</td>
+<td></td>
+<td>33</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Customer.Address.Street</td>
+<td></td>
+<td>34</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Customer.Address.Number</td>
+<td></td>
+<td>35</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Customer.Address.Complement</td>
+<td></td>
+<td>36</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Customer.Address.ZipCode</td>
+<td></td>
+<td>37</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Customer.Address.City</td>
+<td></td>
+<td>38</td>
+<td>&ndash;</td>
+<td>O 1.5 não recebe dados relacionados ao comprador</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Customer.Address.State</td>
+<td></td>
+<td>39</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Customer.Address.Country</td>
+<td></td>
+<td>40</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Customer.DeliveryAddress.Street</td>
+<td></td>
+<td>41</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Customer.DeliveryAddress.Number</td>
+<td></td>
+<td>42</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Customer.DeliveryAddress.Complement</td>
+<td></td>
+<td>43</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Customer.DeliveryAddress.ZipCode</td>
+<td></td>
+<td>44</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Customer.DeliveryAddress.City</td>
+<td></td>
+<td>45</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Customer.DeliveryAddress.State</td>
+<td></td>
+<td>46</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Customer.DeliveryAddress.Country</td>
+<td></td>
+<td>47</td>
+<td>&ndash;</td>
+<td>O 1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Payment.Type</td>
+<td></td>
+<td>9</td>
+<td>forma-pagamento.produto</td>
+<td>At 3.0 the method of payment (credit and debit) and the type of interest are defined in different fields</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>12</td>
+<td>dados-pedido.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Payment.Currency</td>
+<td></td>
+<td>13</td>
+<td>dados-pedido.moeda</td>
+<td></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Payment.Country</td>
+<td></td>
+<td>48</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>26</td>
+<td>Payment.Provider</td>
+<td></td>
+<td>49</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not offer other forms of payment other than Cielo. The 3.0 dispobibiliza, as well as Cielo, Bradesco and BB</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Payment.SeviceTaxAmount</td>
+<td></td>
+<td>17</td>
+<td>dados-pedido.taxa-embarque</td>
+<td></td>
+</tr>
+<tr>
+<td>28</td>
+<td>Payment.Installments</td>
+<td></td>
+<td>10</td>
+<td>forma-pagamento.parcelas</td>
+<td></td>
+</tr>
+<tr>
+<td>29</td>
+<td>Payment.Interest</td>
+<td></td>
+<td>9</td>
+<td>forma-pagamento.produto</td>
+<td>At 3.0 the method of payment (credit and debit) and the type of interest are defined in different fields</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Payment.Capture</td>
+<td></td>
+<td>20</td>
+<td>capture</td>
+<td></td>
+</tr>
+<tr>
+<td>31</td>
+<td>Payment.SoftDescriptor</td>
+<td></td>
+<td>18</td>
+<td>dados-pedido.soft-descriptor</td>
+<td></td>
+</tr>
+<tr>
+<td>32</td>
+<td>Payment.ReturnUrl</td>
+<td></td>
+<td>19</td>
+<td>url-retorno</td>
+<td></td>
+</tr>
+<tr>
+<td>33</td>
+<td>Payment.ExtraData[]</td>
+<td></td>
+<td>21</td>
+<td>campo-livre</td>
+<td>At 1.5 is a string and 3.0 is a collection key/value</td>
+</tr>
+<tr>
+<td>34</td>
+<td>Payment.Authenticate</td>
+<td></td>
+<td>23</td>
+<td>autorizar</td>
+<td></td>
+</tr>
+<tr>
+<td>35</td>
+<td>Payment.CreditCard.CardNumber</td>
+<td></td>
+<td>3</td>
+<td>dados-portador.numero</td>
+<td></td>
+</tr>
+<tr>
+<td>36</td>
+<td>Payment.CreditCard.Holder</td>
+<td></td>
+<td>50</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>37</td>
+<td>Payment.CreditCard.ExpirationDate</td>
+<td></td>
+<td>4</td>
+<td>dados-portador.validade</td>
+<td></td>
+</tr>
+<tr>
+<td>38</td>
+<td>Payment.CreditCard.SecurityCode</td>
+<td></td>
+<td>6</td>
+<td>dados-portador.codigo-seguranca</td>
+<td></td>
+</tr>
+<tr>
+<td>39</td>
+<td>Payment.CreditCard.CardToken</td>
+<td></td>
+<td>7</td>
+<td>dados-portador.token</td>
+<td></td>
+</tr>
+<tr>
+<td>40</td>
+<td>Payment.CreditCard.SaveCard</td>
+<td></td>
+<td>24</td>
+<td>gerar-token</td>
+<td></td>
+</tr>
+<tr>
+<td>41</td>
+<td>Payment.CreditCard.Brand</td>
+<td></td>
+<td>8</td>
+<td>forma-pagamento.bandeira</td>
+<td></td>
+</tr>
+<tr>
+<td>42</td>
+<td>Payment.RecurrentPayment.EndDate</td>
+<td></td>
+<td>51</td>
+<td>&ndash;</td>
+<td>1.5 uses another form of recurrence</td>
+</tr>
+<tr>
+<td>43</td>
+<td>Payment.RecurrentPayment.Interval</td>
+<td></td>
+<td>52</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>44</td>
+<td>Payment.RecurrentPayment.AuthorizeNow</td>
+<td></td>
+<td>53</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>45</td>
+<td>&ndash;</td>
+<td></td>
+<td>5</td>
+<td>dados-portador.indicador</td>
+<td>At 3.0 there is no field to enter the sending of the CVV.</td>
+</tr>
+<tr>
+<td>46</td>
+<td>&ndash;</td>
+<td></td>
+<td>14</td>
+<td>dados-pedido.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>47</td>
+<td>&ndash;</td>
+<td></td>
+<td>15</td>
+<td>dados-pedido.descricao</td>
+<td></td>
+</tr>
+<tr>
+<td>48</td>
+<td>&ndash;</td>
+<td></td>
+<td>16</td>
+<td>dados-pedido.idioma</td>
+<td></td>
+</tr>
+<tr>
+<td>49</td>
+<td>&ndash;</td>
+<td></td>
+<td>22</td>
+<td>bin</td>
+<td></td>
+</tr>
+<tr>
+<td>50</td>
+<td>&ndash;</td>
+<td></td>
+<td>25</td>
+<td>avs.dados-avs.endereco</td>
+<td>3.0 It does not support AVI yet</td>
+</tr>
+<tr>
+<td>51</td>
+<td>&ndash;</td>
+<td></td>
+<td>26</td>
+<td>avs.dados-avs.complemento</td>
+<td>3.0 It does not support AVI yet</td>
+</tr>
+<tr>
+<td>52</td>
+<td>&ndash;</td>
+<td></td>
+<td>27</td>
+<td>avs.dados-avs.numero</td>
+<td>3.0 It does not support AVI yet</td>
+</tr>
+<tr>
+<td>53</td>
+<td>&ndash;</td>
+<td></td>
+<td>28</td>
+<td>avs.dados-avs.bairro</td>
+<td>3.0 It does not support AVI yet</td>
+</tr>
+<tr>
+<td>54</td>
+<td>&ndash;</td>
+<td></td>
+<td>29</td>
+<td>avs.dados-avs.cep</td>
+<td>3.0 It does not support AVI yet</td>
+</tr>
+</tbody></table>
+
+<h2 id="credit-response-table">Credit Response Table</h2>
+
+<p>In this section you can review, field to field, each specific solutions in the scenario of response a request for sale by credit. If your current integration use the Webservice 1.5 solution and you want to make a comparison with the 3.0 API, simply select the &#39;GUIAR POR<code class="prettyprint">column of elements of 1.5; if your current integration using the API 3.0 solution and you want to make the comparison with the Webservice 1.5, just select the &#39;GUIAR POR</code> column properties 3.0.</p>
+
+<table><thead>
+<tr>
+<th>Guide per</th>
+<th>soluion 3.0</th>
+<th></th>
+<th>Guide per</th>
+<th>solution 1.5</th>
+<th>Comments</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>&ndash;Header.MerchantId</td>
+<td></td>
+<td>30</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&ndash;Header.MerchantKey</td>
+<td></td>
+<td>31</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&ndash;Header.RequestId</td>
+<td></td>
+<td>32</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>MerchantOrderId</td>
+<td></td>
+<td>3</td>
+<td>dados-pedido.numero</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Customer.Name</td>
+<td></td>
+<td>33</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Customer.Email</td>
+<td></td>
+<td>34</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Customer.Birthdate</td>
+<td></td>
+<td>35</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Customer.Address.Street</td>
+<td></td>
+<td>36</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Customer.Address.Number</td>
+<td></td>
+<td>37</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Customer.Address.Complement</td>
+<td></td>
+<td>38</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Customer.Address.ZipCode</td>
+<td></td>
+<td>39</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Customer.Address.City</td>
+<td></td>
+<td>40</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Customer.Address.State</td>
+<td></td>
+<td>41</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td>Customer.Address.Country</td>
+<td></td>
+<td>42</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Customer.DeliveryAddress.Street</td>
+<td></td>
+<td>43</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td>Customer.DeliveryAddress.Number</td>
+<td></td>
+<td>44</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>17</td>
+<td>Customer.DeliveryAddress.Complement</td>
+<td></td>
+<td>45</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td>Customer.DeliveryAddress.ZipCode</td>
+<td></td>
+<td>46</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>19</td>
+<td>Customer.DeliveryAddress.City</td>
+<td></td>
+<td>47</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>Customer.DeliveryAddress.State</td>
+<td></td>
+<td>48</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>21</td>
+<td>Customer.DeliveryAddress.Country</td>
+<td></td>
+<td>49</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>22</td>
+<td>Payment.Type</td>
+<td></td>
+<td>11</td>
+<td>forma-pagamento.produto</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>4</td>
+<td>dados-pedido.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>17</td>
+<td>autenticacao.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>22</td>
+<td>autorizacao.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Payment.CapturedAmount</td>
+<td></td>
+<td>29</td>
+<td>captura.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Payment.Currency</td>
+<td></td>
+<td>5</td>
+<td>dados-pedido.moeda</td>
+<td></td>
+</tr>
+<tr>
+<td>26</td>
+<td>Payment.Country</td>
+<td></td>
+<td>50</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Payment.Provider</td>
+<td></td>
+<td>51</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Payment.SeviceTaxAmount</td>
+<td></td>
+<td>9</td>
+<td>dados-pedido.taxa-embarque</td>
+<td></td>
+</tr>
+<tr>
+<td>29</td>
+<td>Payment.Installments</td>
+<td></td>
+<td>12</td>
+<td>forma-pagamento.parcelas</td>
+<td></td>
+</tr>
+<tr>
+<td>30</td>
+<td>Payment.Interest</td>
+<td></td>
+<td>11</td>
+<td>forma-pagamento.produto</td>
+<td></td>
+</tr>
+<tr>
+<td>31</td>
+<td>Payment.Capture</td>
+<td></td>
+<td>52</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Payment.SoftDescriptor</td>
+<td></td>
+<td>53</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>33</td>
+<td>Payment.ReturnUrl</td>
+<td></td>
+<td>54</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>34</td>
+<td>Payment.ExtraData[]</td>
+<td></td>
+<td>55</td>
+<td>&ndash;</td>
+<td>O 1.5 não retorna os dados de request no response</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Payment.Authenticate</td>
+<td></td>
+<td>56</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Payment.Tid</td>
+<td></td>
+<td>1</td>
+<td>tid</td>
+<td></td>
+</tr>
+<tr>
+<td>37</td>
+<td>Payment.ProofOfSale</td>
+<td></td>
+<td>25</td>
+<td>autorizacao.nsu</td>
+<td></td>
+</tr>
+<tr>
+<td>38</td>
+<td>Payment.AuthorizationCode</td>
+<td></td>
+<td>19</td>
+<td>autorizacao.arp</td>
+<td></td>
+</tr>
+<tr>
+<td>39</td>
+<td>Payment.Status</td>
+<td></td>
+<td>13</td>
+<td>status</td>
+<td>The values returned by the applications are different</td>
+</tr>
+<tr>
+<td>40</td>
+<td>Payment.ReturnCode</td>
+<td></td>
+<td>14</td>
+<td>autenticacao.codigo</td>
+<td>At 3.0 there is only one field to return code</td>
+</tr>
+<tr>
+<td>40</td>
+<td>Payment.ReturnCode</td>
+<td></td>
+<td>23</td>
+<td>autorizacao.lr</td>
+<td>At 3.0 there is only one field to return code</td>
+</tr>
+<tr>
+<td>40</td>
+<td>Payment.ReturnCode</td>
+<td></td>
+<td>26</td>
+<td>captura.codigo</td>
+<td>At 3.0 there is only one field to return code</td>
+</tr>
+<tr>
+<td>41</td>
+<td>Payment.ReturnMessage</td>
+<td></td>
+<td>15</td>
+<td>autenticacao.mensagem</td>
+<td>At 3.0 there is only one field to return message</td>
+</tr>
+<tr>
+<td>41</td>
+<td>Payment.ReturnMessage</td>
+<td></td>
+<td>20</td>
+<td>autorizacao.mensagem</td>
+<td>At 3.0 there is only one field to return message</td>
+</tr>
+<tr>
+<td>41</td>
+<td>Payment.ReturnMessage</td>
+<td></td>
+<td>27</td>
+<td>captura.mensagem</td>
+<td>At 3.0 there is only one field to return message</td>
+</tr>
+<tr>
+<td>42</td>
+<td>Payment.ReceivedDate</td>
+<td></td>
+<td>6</td>
+<td>dados-pedido.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>43</td>
+<td>Payment.CapturedDate</td>
+<td></td>
+<td>28</td>
+<td>captura.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>44</td>
+<td>Payment.Eci</td>
+<td></td>
+<td>18</td>
+<td>autenticacao.eci</td>
+<td></td>
+</tr>
+<tr>
+<td>45</td>
+<td>Payment.CreditCard.CardNumber</td>
+<td></td>
+<td>57</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>46</td>
+<td>Payment.CreditCard.Holder</td>
+<td></td>
+<td>58</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>47</td>
+<td>Payment.CreditCard.ExpirationDate</td>
+<td></td>
+<td>59</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>48</td>
+<td>Payment.CreditCard.SecurityCode</td>
+<td></td>
+<td>60</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>49</td>
+<td>Payment.CreditCard.CardToken</td>
+<td></td>
+<td>61</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>50</td>
+<td>Payment.CreditCard.SaveCard</td>
+<td></td>
+<td>62</td>
+<td>&ndash;</td>
+<td>O 1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>51</td>
+<td>Payment.CreditCard.Brand</td>
+<td></td>
+<td>10</td>
+<td>forma-pagamento.bandeira</td>
+<td></td>
+</tr>
+<tr>
+<td>52</td>
+<td>Payment.RecurrentPayment.EndDate</td>
+<td></td>
+<td>63</td>
+<td>&ndash;</td>
+<td>Recurrence works differently in APIs</td>
+</tr>
+<tr>
+<td>53</td>
+<td>Payment.RecurrentPayment.Interval</td>
+<td></td>
+<td>64</td>
+<td>&ndash;</td>
+<td>Recurrence works differently in APIs</td>
+</tr>
+<tr>
+<td>54</td>
+<td>Payment.RecurrentPayment.AuthorizeNow</td>
+<td></td>
+<td>65</td>
+<td>&ndash;</td>
+<td>Recurrence works differently in APIs</td>
+</tr>
+<tr>
+<td>55</td>
+<td>Payment.Links[].Method</td>
+<td></td>
+<td>66</td>
+<td>&ndash;</td>
+<td>1.5 doesn&rsquo;t support HATEOAS</td>
+</tr>
+<tr>
+<td>56</td>
+<td>Payment.Links[].Rel</td>
+<td></td>
+<td>67</td>
+<td>&ndash;</td>
+<td>1.5 doesn&rsquo;t support HATEOAS</td>
+</tr>
+<tr>
+<td>57</td>
+<td>Payment.Links[].Href</td>
+<td></td>
+<td>68</td>
+<td>&ndash;</td>
+<td>1.5 doesn&rsquo;t support HATEOAS</td>
+</tr>
+<tr>
+<td>58</td>
+<td>&ndash;</td>
+<td></td>
+<td>2</td>
+<td>pan</td>
+<td></td>
+</tr>
+<tr>
+<td>59</td>
+<td>&ndash;</td>
+<td></td>
+<td>7</td>
+<td>dados-pedido.descricao</td>
+<td></td>
+</tr>
+<tr>
+<td>60</td>
+<td>&ndash;</td>
+<td></td>
+<td>8</td>
+<td>dados-pedido.idioma</td>
+<td></td>
+</tr>
+<tr>
+<td>61</td>
+<td>&ndash;</td>
+<td></td>
+<td>16</td>
+<td>autenticacao.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>63</td>
+<td>&ndash;</td>
+<td></td>
+<td>21</td>
+<td>autorizacao.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>64</td>
+<td>&ndash;</td>
+<td></td>
+<td>24</td>
+<td>autorizacao.codigo</td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h1 id="integration-with-debit-card">Integration with debit card</h1>
+
+<h2 id="debit-request-table">Debit Request Table</h2>
+
+<p>In this section you can review, field to field, each specific solutions in the scenario of a sale request by debt. If your current integration use the Webservice 1.5 solution and you want to make a comparison with the 3.0 API, simply select the <code class="prettyprint">GUIAR POR</code> column of elements of 1.5; if your current integration using the API 3.0 solution and you want to make the comparison with the Webservice 1.5, just select the <code class="prettyprint">GUIAR POR</code> column properties 3.0.</p>
+
+<table><thead>
+<tr>
+<th>Guide per</th>
+<th>solution 3.0</th>
+<th></th>
+<th>Guide per</th>
+<th>solution 1.5</th>
+<th>Comments</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>&ndash;Header.MerchantId</td>
+<td></td>
+<td>1</td>
+<td>dados-ec.numero</td>
+<td>At 1.5, EC receives the body request and 3.0 gets the merchantId in the header. These fields do not have the same value</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&ndash;Header.MerchantKey</td>
+<td></td>
+<td>2</td>
+<td>dados-ec.chave</td>
+<td>At 1.5, receives the key in the body request and 3.0 gets the merchantId in the header. These fields do not have the same value</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&ndash;Header.RequestId</td>
+<td></td>
+<td>30</td>
+<td>&ndash;</td>
+<td>At 1.5 there is no field with the Request ID</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MerchantOrderId</td>
+<td></td>
+<td>11</td>
+<td>dados-pedido.numero</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Customer.Name</td>
+<td></td>
+<td>31</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Customer.Email</td>
+<td></td>
+<td>32</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Customer.Birthdate</td>
+<td></td>
+<td>33</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Customer.Address.Street</td>
+<td></td>
+<td>34</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Customer.Address.Number</td>
+<td></td>
+<td>35</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Customer.Address.Complement</td>
+<td></td>
+<td>36</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Customer.Address.ZipCode</td>
+<td></td>
+<td>37</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Customer.Address.City</td>
+<td></td>
+<td>38</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Customer.Address.State</td>
+<td></td>
+<td>39</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Customer.Address.Country</td>
+<td></td>
+<td>40</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Customer.DeliveryAddress.Street</td>
+<td></td>
+<td>41</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Customer.DeliveryAddress.Number</td>
+<td></td>
+<td>42</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Customer.DeliveryAddress.Complement</td>
+<td></td>
+<td>43</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Customer.DeliveryAddress.ZipCode</td>
+<td></td>
+<td>44</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Customer.DeliveryAddress.City</td>
+<td></td>
+<td>45</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Customer.DeliveryAddress.State</td>
+<td></td>
+<td>46</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Customer.DeliveryAddress.Country</td>
+<td></td>
+<td>47</td>
+<td>&ndash;</td>
+<td>1.5 does not receive data related to the buyer</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Payment.Type</td>
+<td></td>
+<td>9</td>
+<td>forma-pagamento.produto</td>
+<td>At 3.0 the method of payment (credit and debit) and the type of interest are defined in different fields</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>12</td>
+<td>dados-pedido.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Payment.Currency</td>
+<td></td>
+<td>13</td>
+<td>dados-pedido.moeda</td>
+<td></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Payment.Country</td>
+<td></td>
+<td>48</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>26</td>
+<td>Payment.Provider</td>
+<td></td>
+<td>49</td>
+<td>&ndash;</td>
+<td>1.5 It does not offer other forms of payment other than Cielo. The 3.0 dispobibiliza, as well as Cielo, Bradesco and BB</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Payment.SoftDescriptor</td>
+<td></td>
+<td>18</td>
+<td>dados-pedido.soft-descriptor</td>
+<td></td>
+</tr>
+<tr>
+<td>28</td>
+<td>Payment.ReturnUrl</td>
+<td></td>
+<td>19</td>
+<td>url-retorno</td>
+<td></td>
+</tr>
+<tr>
+<td>29</td>
+<td>Payment.ExtraData[]</td>
+<td></td>
+<td>21</td>
+<td>campo-livre</td>
+<td></td>
+</tr>
+<tr>
+<td>30</td>
+<td>Payment.DebitCard.CardNumber</td>
+<td></td>
+<td>3</td>
+<td>dados-portador.numero</td>
+<td>At 3.0 the method of payment (credit and debit) and the type of interest are defined in different fields</td>
+</tr>
+<tr>
+<td>31</td>
+<td>Payment.DebitCard.Holder</td>
+<td></td>
+<td>50</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>32</td>
+<td>Payment.DebitCard.ExpirationDate</td>
+<td></td>
+<td>4</td>
+<td>dados-portador.validade</td>
+<td>At 3.0 there is no field to enter the sending of the CVV.</td>
+</tr>
+<tr>
+<td>33</td>
+<td>Payment.DebitCard.SecurityCode</td>
+<td></td>
+<td>6</td>
+<td>dados-portador.codigo-seguranca</td>
+<td></td>
+</tr>
+<tr>
+<td>34</td>
+<td>Payment.DebitCard.CardToken</td>
+<td></td>
+<td>7</td>
+<td>dados-portador.token</td>
+<td>At 1.5 is a string and at 3.0 is a key/value collection</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Payment.DebitCard.SaveCard</td>
+<td></td>
+<td>24</td>
+<td>gerar-token</td>
+<td></td>
+</tr>
+<tr>
+<td>36</td>
+<td>Payment.DebitCard.Brand</td>
+<td></td>
+<td>8</td>
+<td>forma-pagamento.bandeira</td>
+<td></td>
+</tr>
+<tr>
+<td>37</td>
+<td>&ndash;</td>
+<td></td>
+<td>17</td>
+<td>dados-pedido.taxa-embarque</td>
+<td></td>
+</tr>
+<tr>
+<td>38</td>
+<td>&ndash;</td>
+<td></td>
+<td>10</td>
+<td>forma-pagamento.parcelas</td>
+<td></td>
+</tr>
+<tr>
+<td>39</td>
+<td>&ndash;</td>
+<td></td>
+<td>9</td>
+<td>forma-pagamento.produto</td>
+<td></td>
+</tr>
+<tr>
+<td>40</td>
+<td>&ndash;</td>
+<td></td>
+<td>20</td>
+<td>capturar</td>
+<td></td>
+</tr>
+<tr>
+<td>41</td>
+<td>&ndash;</td>
+<td></td>
+<td>23</td>
+<td>autorizar</td>
+<td></td>
+</tr>
+<tr>
+<td>42</td>
+<td>&ndash;</td>
+<td></td>
+<td>5</td>
+<td>dados-portador.indicador</td>
+<td></td>
+</tr>
+<tr>
+<td>43</td>
+<td>&ndash;</td>
+<td></td>
+<td>14</td>
+<td>dados-pedido.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>44</td>
+<td>&ndash;</td>
+<td></td>
+<td>15</td>
+<td>dados-pedido.descricao</td>
+<td></td>
+</tr>
+<tr>
+<td>45</td>
+<td>&ndash;</td>
+<td></td>
+<td>16</td>
+<td>dados-pedido.idioma</td>
+<td></td>
+</tr>
+<tr>
+<td>46</td>
+<td>&ndash;</td>
+<td></td>
+<td>22</td>
+<td>bin</td>
+<td></td>
+</tr>
+<tr>
+<td>47</td>
+<td>&ndash;</td>
+<td></td>
+<td>25</td>
+<td>avs.dados-avs.endereco</td>
+<td>3.0 doesn&rsquo;t support AVS</td>
+</tr>
+<tr>
+<td>48</td>
+<td>&ndash;</td>
+<td></td>
+<td>26</td>
+<td>avs.dados-avs.complemento</td>
+<td>3.0 doesn&rsquo;t support AVS</td>
+</tr>
+<tr>
+<td>49</td>
+<td>&ndash;</td>
+<td></td>
+<td>27</td>
+<td>avs.dados-avs.numero</td>
+<td>3.0 doesn&rsquo;t support AVS</td>
+</tr>
+<tr>
+<td>50</td>
+<td>&ndash;</td>
+<td></td>
+<td>28</td>
+<td>avs.dados-avs.bairro</td>
+<td>3.0 doesn&rsquo;t support AVS</td>
+</tr>
+<tr>
+<td>51</td>
+<td>&ndash;</td>
+<td></td>
+<td>29</td>
+<td>avs.dados-avs.cep</td>
+<td>3.0 doesn&rsquo;t support AVS</td>
+</tr>
+</tbody></table>
+
+<h2 id="debit-response-table">Debit Response Table</h2>
+
+<p>In this section you can review, field to field, each specific solutions in the response scenario of a sale request by debt. If your current integration use the Webservice 1.5 solution and you want to make a comparison with the 3.0 API, simply select the <code class="prettyprint">GUIAR POR</code> column of elements of 1.5; if your current integration using the API 3.0 solution and you want to make the comparison with the Webservice 1.5, just select the <code class="prettyprint">GUIAR POR</code> column properties 3.0.</p>
+
+<table><thead>
+<tr>
+<th>Guide per</th>
+<th>solution 3.0</th>
+<th></th>
+<th>Guiar por</th>
+<th>solução 1.5</th>
+<th>Comments</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>&ndash;Header.MerchantId</td>
+<td></td>
+<td>30</td>
+<td>&ndash;</td>
+<td>1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&ndash;Header.MerchantKey</td>
+<td></td>
+<td>31</td>
+<td>&ndash;</td>
+<td>1.5 It does not return the request data in response</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&ndash;Header.RequestId</td>
+<td></td>
+<td>32</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>MerchantOrderId</td>
+<td></td>
+<td>3</td>
+<td>dados-pedido.numero</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Customer.Name</td>
+<td></td>
+<td>33</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Customer.Email</td>
+<td></td>
+<td>34</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Customer.Birthdate</td>
+<td></td>
+<td>35</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td>Customer.Address.Street</td>
+<td></td>
+<td>36</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Customer.Address.Number</td>
+<td></td>
+<td>37</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Customer.Address.Complement</td>
+<td></td>
+<td>38</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Customer.Address.ZipCode</td>
+<td></td>
+<td>39</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Customer.Address.City</td>
+<td></td>
+<td>40</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Customer.Address.State</td>
+<td></td>
+<td>41</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td>Customer.Address.Country</td>
+<td></td>
+<td>42</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Customer.DeliveryAddress.Street</td>
+<td></td>
+<td>43</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td>Customer.DeliveryAddress.Number</td>
+<td></td>
+<td>44</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>17</td>
+<td>Customer.DeliveryAddress.Complement</td>
+<td></td>
+<td>45</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td>Customer.DeliveryAddress.ZipCode</td>
+<td></td>
+<td>46</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>19</td>
+<td>Customer.DeliveryAddress.City</td>
+<td></td>
+<td>47</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>20</td>
+<td>Customer.DeliveryAddress.State</td>
+<td></td>
+<td>48</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>21</td>
+<td>Customer.DeliveryAddress.Country</td>
+<td></td>
+<td>49</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>22</td>
+<td>Payment.Type</td>
+<td></td>
+<td>11</td>
+<td>forma-pagamento.produto</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>4</td>
+<td>dados-pedido.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>17</td>
+<td>autenticacao.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>23</td>
+<td>Payment.Amount</td>
+<td></td>
+<td>22</td>
+<td>autorizacao.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>CapturedAmount</td>
+<td></td>
+<td>29</td>
+<td>captura.valor</td>
+<td></td>
+</tr>
+<tr>
+<td>25</td>
+<td>Payment.Currency</td>
+<td></td>
+<td>5</td>
+<td>dados-pedido.moeda</td>
+<td></td>
+</tr>
+<tr>
+<td>26</td>
+<td>Payment.Country</td>
+<td></td>
+<td>50</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Payment.Provider</td>
+<td></td>
+<td>51</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Payment.SoftDescriptor</td>
+<td></td>
+<td>53</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Payment.ReturnUrl</td>
+<td></td>
+<td>54</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Payment.ExtraData[]</td>
+<td></td>
+<td>55</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>31</td>
+<td>Payment.Tid</td>
+<td></td>
+<td>1</td>
+<td>tid</td>
+<td></td>
+</tr>
+<tr>
+<td>32</td>
+<td>Payment.ProofOfSale</td>
+<td></td>
+<td>25</td>
+<td>autorizacao.nsu</td>
+<td></td>
+</tr>
+<tr>
+<td>33</td>
+<td>Payment.AuthorizationCode</td>
+<td></td>
+<td>19</td>
+<td>autorizacao.arp</td>
+<td></td>
+</tr>
+<tr>
+<td>34</td>
+<td>Payment.Status</td>
+<td></td>
+<td>13</td>
+<td>status</td>
+<td>The values returned by the applications are different</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Payment.ReturnCode</td>
+<td></td>
+<td>14</td>
+<td>autenticacao.codigo</td>
+<td>At 3.0 there is only one field to return code</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Payment.ReturnCode</td>
+<td></td>
+<td>23</td>
+<td>autorizacao.lr</td>
+<td>At 3.0 there is only one field to return code</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Payment.ReturnCode</td>
+<td></td>
+<td>26</td>
+<td>captura.codigo</td>
+<td>At 3.0 there is only one field to return code</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Payment.ReturnMessage</td>
+<td></td>
+<td>15</td>
+<td>autenticacao.mensagem</td>
+<td>At 3.0 there is only one field to return message</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Payment.ReturnMessage</td>
+<td></td>
+<td>20</td>
+<td>autorizacao.mensagem</td>
+<td>At 3.0 there is only one field to return message</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Payment.ReturnMessage</td>
+<td></td>
+<td>27</td>
+<td>captura.mensagem</td>
+<td>At 3.0 there is only one field to return message</td>
+</tr>
+<tr>
+<td>37</td>
+<td>Payment.ReceivedDate</td>
+<td></td>
+<td>6</td>
+<td>dados-pedido.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>38</td>
+<td>CapturedDate</td>
+<td></td>
+<td>28</td>
+<td>captura.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>39</td>
+<td>Payment.Eci</td>
+<td></td>
+<td>18</td>
+<td>autenticacao.eci</td>
+<td></td>
+</tr>
+<tr>
+<td>40</td>
+<td>Payment.DebitCard.CardNumber</td>
+<td></td>
+<td>57</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>41</td>
+<td>Payment.DebitCard.Holder</td>
+<td></td>
+<td>58</td>
+<td>&ndash;</td>
+<td></td>
+</tr>
+<tr>
+<td>42</td>
+<td>Payment.DebitCard.ExpirationDate</td>
+<td></td>
+<td>59</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>43</td>
+<td>Payment.DebitCard.SecurityCode</td>
+<td></td>
+<td>60</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>44</td>
+<td>Payment.DebitCard.CardToken</td>
+<td></td>
+<td>61</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>45</td>
+<td>Payment.DebitCard.SaveCard</td>
+<td></td>
+<td>62</td>
+<td>&ndash;</td>
+<td>1.5 does not return the request data in response</td>
+</tr>
+<tr>
+<td>46</td>
+<td>Payment.DebitCard.Brand</td>
+<td></td>
+<td>10</td>
+<td>forma-pagamento.bandeira</td>
+<td></td>
+</tr>
+<tr>
+<td>47</td>
+<td>Payment.Links[].Method</td>
+<td></td>
+<td>66</td>
+<td>&ndash;</td>
+<td>1.5 doesn&rsquo;t support HATEOAS</td>
+</tr>
+<tr>
+<td>48</td>
+<td>Payment.Links[].Rel</td>
+<td></td>
+<td>67</td>
+<td>&ndash;</td>
+<td>1.5 doesn&rsquo;t support HATEOAS</td>
+</tr>
+<tr>
+<td>49</td>
+<td>Payment.Links[].Href</td>
+<td></td>
+<td>68</td>
+<td>&ndash;</td>
+<td>1.5 doesn&rsquo;t support HATEOAS</td>
+</tr>
+<tr>
+<td>50</td>
+<td>&ndash;</td>
+<td></td>
+<td>2</td>
+<td>pan</td>
+<td></td>
+</tr>
+<tr>
+<td>51</td>
+<td>&ndash;</td>
+<td></td>
+<td>7</td>
+<td>dados-pedido.descricao</td>
+<td></td>
+</tr>
+<tr>
+<td>52</td>
+<td>&ndash;</td>
+<td></td>
+<td>8</td>
+<td>dados-pedido.idioma</td>
+<td></td>
+</tr>
+<tr>
+<td>53</td>
+<td>&ndash;</td>
+<td></td>
+<td>16</td>
+<td>autenticacao.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>54</td>
+<td>&ndash;</td>
+<td></td>
+<td>21</td>
+<td>autorizacao.data-hora</td>
+<td></td>
+</tr>
+<tr>
+<td>55</td>
+<td>&ndash;</td>
+<td></td>
+<td>24</td>
+<td>autorizacao.codigo</td>
+<td></td>
+</tr>
+<tr>
+<td>56</td>
+<td>&ndash;</td>
+<td></td>
+<td>12</td>
+<td>forma-pagamento.parcelas</td>
+<td></td>
+</tr>
+<tr>
+<td>57</td>
+<td>&ndash;</td>
+<td></td>
+<td>11</td>
+<td>forma-pagamento.produto</td>
+<td></td>
+</tr>
+<tr>
+<td>58</td>
+<td>&ndash;</td>
+<td></td>
+<td>9</td>
+<td>dados-pedido.taxa-embarque</td>
+<td></td>
+</tr>
+</tbody></table>
+
+            </div>
+        </div>
+        <script>
+            new Card({
+                form: document.querySelector('form'),
+                container: '.card-wrapper'
+            });
+        </script>
+    </body>
+    </html>
